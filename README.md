@@ -1,0 +1,1 @@
+# plugins-restore-classic-widgets
