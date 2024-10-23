@@ -9,8 +9,8 @@ Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.6
-Stable tag: 4.31
-Version: 4.31
+Stable tag: 4.32
+Version: 4.32
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -57,7 +57,7 @@ There is no going back, so be sure this is what you want. The former blocks will
 
 == This plugin, also from the same author, blocks spam and hackers! ==
 Upgrade your site's security with Cloudflare Turnstile or reCAPTCHA. Enjoy insightful analytics charts and safeguard all or specific pages from spam and bot attacks. Completely free!"
-<a href="https://wordpress.org/plugins/recaptcha-for-all/">Download it here for free from WordPress</a> 
+<a href="https://wordpress.org/plugins/recaptcha-for-all/>Download it here for free from WordPress</a> 
 
 
 == Screenshots ==
@@ -199,6 +199,7 @@ This question also addresses the following questions: wordpress widget backup, i
 For backing up or importing WordPress widgets, using the "Restore Classic Widgets" plugin ensures that your widget settings remain intact and compatible with classic WordPress interfaces.
 
 == Changelog ==
+** 4.31 2024-10-23 - Small Improvements on error handling.
 ** 4.31 2024-08-12 - Small Improvements.
 ** 4.30 2024-08-02 - Small Improvements.
 ** 4.27/28 2024-07-31 - Small Improvements.
