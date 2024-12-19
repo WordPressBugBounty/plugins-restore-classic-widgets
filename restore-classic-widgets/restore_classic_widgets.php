@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore Classic Widgets
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.32
+Version: 4.33
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -35,20 +35,35 @@ add_filter('use_widgets_block_editor', '__return_false');
 
 // -----------------------------
 
+//
+//
+//
+//
+//
 
-function restore_classic_widgets_check_wordpress_logged_in_cookie()
-{
-    // Percorre todos os cookies definidos
-    foreach ($_COOKIE as $key => $value) {
-        // Verifica se algum cookie começa com 'wordpress_logged_in_'
-        if (strpos($key, 'wordpress_logged_in_') === 0) {
-            // Cookie encontrado
-            return true;
+    function restore_classic_widgets_check_wordpress_logged_in_cookie()
+    {
+        // Percorre todos os cookies definidos
+        foreach ($_COOKIE as $key => $value) {
+            // Verifica se algum cookie começa com 'wordpress_logged_in_'
+            if (strpos($key, 'wordpress_logged_in_') === 0) {
+                // Cookie encontrado
+                return true;
+            }
         }
+        // Cookie não encontrado
+        return false;
     }
-    // Cookie não encontrado
-    return false;
-}
+
+
+$restore_classic_widgets_is_admin = restore_classic_widgets_check_wordpress_logged_in_cookie();
+//
+//
+//
+//
+//
+//
+
 
 function restore_classic_widgets_bill_more()
 {
@@ -109,6 +124,22 @@ function restore_classic_widget_row_meta($links, $file)
 add_filter('plugin_row_meta', 'restore_classic_widget_row_meta', 10, 2);
 
 
+
+
+function restore_classic_widgets_load_chat()
+{
+  global $restore_classic_widgets_is_admin;
+    if ($restore_classic_widgets_is_admin and current_user_can("manage_options")) {
+			// ob_start();
+			//debug2();
+
+			if ( ! class_exists( 'restore_classic_widgets_BillChat\ChatPlugin' ) ) {
+				require_once dirname(__FILE__) . "/includes/chat/class_bill_chat.php";
+
+			}
+		}
+}
+add_action('wp_loaded', 'restore_classic_widgets_load_chat');
 
 // -------------------------------------
 
@@ -214,3 +245,51 @@ function restore_classic_widgets_bill_install()
     }
 }
 add_action('wp_loaded', 'restore_classic_widgets_bill_install', 15);
+
+// language
+
+function restore_classic_widgets_localization_init()
+{
+    $path = RESTORECLASSICPATH . 'language/';
+    $locale = apply_filters('plugin_locale', determine_locale(), 'restore_classic-widgets');
+
+    // Full path of the specific translation file (e.g., es_AR.mo)
+    $specific_translation_path = $path . "restore_classic-widgets-$locale.mo";
+    $specific_translation_loaded = false;
+
+    // Check if the specific translation file exists and try to load it
+    if (file_exists($specific_translation_path)) {
+        $specific_translation_loaded = load_textdomain('restore_classic-widgets', $specific_translation_path);
+    }
+
+    // List of languages that should have a fallback to a specific locale
+    $fallback_locales = [
+        'de' => 'de_DE',  // German
+        'fr' => 'fr_FR',  // French
+        'it' => 'it_IT',  // Italian
+        'es' => 'es_ES',  // Spanish
+        'pt' => 'pt_BR',  // Portuguese (fallback to Brazil)
+        'nl' => 'nl_NL'   // Dutch (fallback to Netherlands)
+    ];
+
+    // If the specific translation was not loaded, try to fallback to the generic version
+    if (!$specific_translation_loaded) {
+        $language = explode('_', $locale)[0];  // Get only the language code, ignoring the country (e.g., es from es_AR)
+
+        if (array_key_exists($language, $fallback_locales)) {
+            // Full path of the generic fallback translation file (e.g., es_ES.mo)
+            $fallback_translation_path = $path . "restore_classic-widgets-{$fallback_locales[$language]}.mo";
+
+            // Check if the fallback generic file exists and try to load it
+            if (file_exists($fallback_translation_path)) {
+                load_textdomain('restore_classic-widgets', $fallback_translation_path);
+            }
+        }
+    }
+
+    // Load the plugin
+    load_plugin_textdomain('restore_classic-widgets', false, plugin_basename(RESTORECLASSICPATH) . '/language/');
+}
+if ($restore_classic_widgets_is_admin) {
+    add_action('plugins_loaded', 'restore_classic_widgets_localization_init');
+}
