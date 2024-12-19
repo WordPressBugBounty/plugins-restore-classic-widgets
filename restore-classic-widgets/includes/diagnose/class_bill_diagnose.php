@@ -86,14 +86,14 @@ function add_help_tab_to_screen() {
         $hmessage = esc_attr__(
             'Here are some details about error and memory monitoring for your plugin. Errors and low memory can prevent your site from functioning properly. On this page, you will find a partial list of the most recent errors and warnings. If you need more details, use the chat form, which will search for additional information using Artificial Intelligence.  
 If you need to dive deeper, install the free plugin WPTools, which provides more in-depth insights.',
-            'restore_classic-widgets'
+            'restore-classic-widgets'
         );
 
         // Adiciona a aba de ajuda
         $screen->add_help_tab([
             'id'      => 'site-health', // ID único para a aba
-            'title'   => esc_attr__('Memory & Error Monitoring', 'restore_classic-widgets'), // Título da aba
-            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', 'restore_classic-widgets') . '</p>
+            'title'   => esc_attr__('Memory & Error Monitoring', 'restore-classic-widgets'), // Título da aba
+            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', 'restore-classic-widgets') . '</p>
                           <p>' . $hmessage . '</p>',
         ]);
     }
@@ -757,15 +757,15 @@ class recaptcha_for_all_Bill_Diagnose
         if ($memory["free"] > 30 and $wpmemory["percent"] < 85) {
             return;
         }
-        $message = esc_attr__("Our plugin", 'restore_classic-widgets');
+        $message = esc_attr__("Our plugin", 'restore-classic-widgets');
         $message .= ' (' . $this->plugin_slug . ') ';
-        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", 'restore_classic-widgets');
+        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", 'restore-classic-widgets');
         $message .=
             '<a href="' .
             esc_url($this->notification_url) .
             '">' .
             " " .
-            esc_attr__("Learn more", 'restore_classic-widgets') .
+            esc_attr__("Learn more", 'restore-classic-widgets') .
             "</a>";
         echo '<div class="notice notice-error is-dismissible">';
         echo '<p style="color: red;">' . wp_kses_post($message) . "</p>";
@@ -778,16 +778,16 @@ class recaptcha_for_all_Bill_Diagnose
             return;
         }
         if ($this->global_variable_has_errors) {
-                $message = esc_attr__("Your site has errors.", 'restore_classic-widgets');
-                $message .= esc_attr__("Our plugin", 'restore_classic-widgets');
+                $message = esc_attr__("Your site has errors.", 'restore-classic-widgets');
+                $message .= esc_attr__("Our plugin", 'restore-classic-widgets');
                 $message .= ' ('.$this->plugin_slug.') ' ;
-                $message .= esc_attr__("can't function as intended. Errors, including JavaScript errors, may lead to visual problems or disrupt functionality, from minor glitches to critical site failures. Promptly address these issues before continuing.", 'restore_classic-widgets');
+                $message .= esc_attr__("can't function as intended. Errors, including JavaScript errors, may lead to visual problems or disrupt functionality, from minor glitches to critical site failures. Promptly address these issues before continuing.", 'restore-classic-widgets');
                 $message .=
                 '<a href="' .
                 esc_url($this->notification_url2) .
                 '">' .
                 " " .
-                esc_attr__("Learn more", 'restore_classic-widgets') .
+                esc_attr__("Learn more", 'restore-classic-widgets') .
                 "</a>";
             echo '<div class="notice notice-error is-dismissible">';
             //$content_with_formatting = wpautop($content);
@@ -810,7 +810,7 @@ class recaptcha_for_all_Bill_Diagnose
         $tabs["Critical Issues"] = esc_html_x(
             "Critical Issues",
             "Site Health",
-            'restore_classic-widgets'
+            'restore-classic-widgets'
         );
         return $tabs;
     }
@@ -849,11 +849,11 @@ class recaptcha_for_all_Bill_Diagnose
             <p style="border: 1px solid #000; padding: 10px;">
                 <strong>
                     <?php
-                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", 'restore_classic-widgets');
+                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", 'restore-classic-widgets');
                     echo ': ' . esc_attr($this->global_plugin_slug) . '. ';
-                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", 'restore_classic-widgets');
+                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", 'restore-classic-widgets');
                     echo '<br>';
-                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", 'restore_classic-widgets');
+                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", 'restore-classic-widgets');
                
                     ?>
                 </strong>
@@ -862,7 +862,7 @@ class recaptcha_for_all_Bill_Diagnose
 <!-- chat -->
 <div id="chat-box">
     <div id="chat-header">
-        <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "restore_classic-widgets");?></h2>
+        <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "restore-classic-widgets");?></h2>
     </div>
     <div id="gif-container">
         <div class="spinner999"></div>
@@ -871,8 +871,8 @@ class recaptcha_for_all_Bill_Diagnose
     <div id="error-message" style="display:none;"></div> <!-- Mensagem de erro -->
 
     <form id="chat-form">
-    <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', 'restore_classic-widgets'); ?>" />
-    <button type="submit"><?php echo esc_attr__('Send', 'restore_classic-widgets'); ?></button>
+    <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', 'restore-classic-widgets'); ?>" />
+    <button type="submit"><?php echo esc_attr__('Send', 'restore-classic-widgets'); ?></button>
 
     </form>
 </div>
@@ -889,7 +889,7 @@ class recaptcha_for_all_Bill_Diagnose
 
             <h3 style="color: red;">
                 <?php
-                echo esc_attr__("Potential Problems", 'restore_classic-widgets');
+                echo esc_attr__("Potential Problems", 'restore-classic-widgets');
                 ?>
             </h3>
             <?php
@@ -897,7 +897,7 @@ class recaptcha_for_all_Bill_Diagnose
             $wpmemory = $memory;
             if ($memory["free"] < 30 or $wpmemory["percent"] > 85) { ?>
                 <h2 style="color: red;">
-                    <?php $message = esc_attr__("Low WordPress Memory Limit", 'restore_classic-widgets'); ?>
+                    <?php $message = esc_attr__("Low WordPress Memory Limit", 'restore-classic-widgets'); ?>
                 </h2>
                 <?php
                 $mb = "MB";
@@ -910,7 +910,7 @@ class recaptcha_for_all_Bill_Diagnose
                 if ($perc > 0.7) {
                     echo '<span style="color:' . esc_attr($wpmemory["color"]) . ';">';
                 }
-                echo esc_attr__("Your usage now", 'restore_classic-widgets') .
+                echo esc_attr__("Your usage now", 'restore-classic-widgets') .
                     ": " .
                     esc_attr($wpmemory["usage"]) .
                     "MB &nbsp;&nbsp;&nbsp;";
@@ -918,7 +918,7 @@ class recaptcha_for_all_Bill_Diagnose
                     echo "</span>";
                 }
                 echo "|&nbsp;&nbsp;&nbsp;" .
-                    esc_attr__("Total Php Server Memory", 'restore_classic-widgets') .
+                    esc_attr__("Total Php Server Memory", 'restore-classic-widgets') .
                     " : " .
                     esc_attr($wpmemory["limit"]) .
                     "MB";
@@ -927,13 +927,13 @@ class recaptcha_for_all_Bill_Diagnose
                 echo "<hr>";
                 $free = $wpmemory["wp_limit"] - $wpmemory["usage"];
                 echo '<p>';
-                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", 'restore_classic-widgets');
+                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", 'restore-classic-widgets');
                 echo '</b>';
                 ?>
                 </b>
                 <a href="https://wpmemory.com/fix-low-memory-limit/">
                     <?php
-                    echo esc_attr__("Learn More", 'restore_classic-widgets');
+                    echo esc_attr__("Learn More", 'restore-classic-widgets');
                     ?>
                 </a>
                 </p>
@@ -962,16 +962,16 @@ class recaptcha_for_all_Bill_Diagnose
             if ($this->global_variable_has_errors) { ?>
                 <h2 style="color: red;">
                     <?php
-                    echo esc_attr__("Site Errors", 'restore_classic-widgets');
+                    echo esc_attr__("Site Errors", 'restore-classic-widgets');
                     ?>
                 </h2>
                 <p>
                     <?php
-                    echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", 'restore_classic-widgets');
+                    echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", 'restore-classic-widgets');
                     ?>
                     <a href="https://wptoolsplugin.com/site-language-error-can-crash-your-site/">
                         <?php
-                        echo esc_attr__("Learn More", 'restore_classic-widgets');
+                        echo esc_attr__("Learn More", 'restore-classic-widgets');
                         ?>
                     </a>
                 </p>
@@ -1025,7 +1025,7 @@ class recaptcha_for_all_Bill_Diagnose
 
 
                 echo "<br />";
-                echo esc_attr__("This is a partial list of the errors found.", 'restore_classic-widgets');
+                echo esc_attr__("This is a partial list of the errors found.", 'restore-classic-widgets');
                 echo "<br />";
                 // Comeca a mostrar erros...
                 //
@@ -1525,12 +1525,12 @@ class recaptcha_for_all_Bill_Diagnose
                 // Adicione uma guia de ajuda
                 $message = esc_attr__(
                     "These are critical issues that can have a significant impact on your site's performance. They can cause many plugins and functionalities to malfunction and, in some cases, render your site completely inoperative, depending on their severity. Address them promptly.",
-                    'restore_classic-widgets'
+                    'restore-classic-widgets'
                 );
         
                 $screen->add_help_tab([
                     "id"      => "custom-help-tab",
-                    "title"   => esc_attr__("Critical Issues", 'restore_classic-widgets'),
+                    "title"   => esc_attr__("Critical Issues", 'restore-classic-widgets'),
                     "content" => "<p>" . $message . "</p>",
                 ]);
             }

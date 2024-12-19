@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore Classic Widgets
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.33
+Version: 4.34
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 $bill_debug = false;
 //$bill_debug = true;
-// debug2();
+//// debug2();
 //
 
 // Make sure the file is not directly accessible.
@@ -63,6 +63,66 @@ $restore_classic_widgets_is_admin = restore_classic_widgets_check_wordpress_logg
 //
 //
 //
+    // language
+    function restore_classic_widgets_localization_init()
+    {
+        $path = RESTORECLASSICPATH . 'language/';
+        $locale = apply_filters('plugin_locale', determine_locale(), 'restore-classic-widgets');
+    
+        // Log the selected locale
+       // debug2("x restore_classic_widgets_localization_init: Locale detected: $locale");
+    
+        // Full path of the specific translation file (e.g., es_AR.mo)
+        $specific_translation_path = $path . "restore-classic-widgets-$locale.mo";
+        $specific_translation_loaded = false;
+    
+        // Check if the specific translation file exists and try to load it
+        if (file_exists($specific_translation_path)) {
+            $specific_translation_loaded = load_textdomain('restore-classic-widgets', $specific_translation_path);
+           // debug2("x Specific translation loaded: $specific_translation_path");
+        } else {
+           // debug2("x Specific translation file not found: $specific_translation_path");
+        }
+    
+        // List of languages that should have a fallback to a specific locale
+        $fallback_locales = [
+            'de' => 'de_DE',  // German
+            'fr' => 'fr_FR',  // French
+            'it' => 'it_IT',  // Italian
+            'es' => 'es_ES',  // Spanish
+            'pt' => 'pt_BR',  // Portuguese (fallback to Brazil)
+            'nl' => 'nl_NL'   // Dutch (fallback to Netherlands)
+        ];
+    
+        // If the specific translation was not loaded, try to fallback to the generic version
+        if (!$specific_translation_loaded) {
+            $language = explode('_', $locale)[0];  // Get only the language code, ignoring the country (e.g., es from es_AR)
+           // debug2("No specific translation found for $locale. Trying fallback for language: $language");
+    
+            if (array_key_exists($language, $fallback_locales)) {
+                // Full path of the generic fallback translation file (e.g., es_ES.mo)
+                $fallback_translation_path = $path . "restore-classic-widgets-{$fallback_locales[$language]}.mo";
+    
+                // Check if the fallback generic file exists and try to load it
+                if (file_exists($fallback_translation_path)) {
+                    load_textdomain('restore-classic-widgets', $fallback_translation_path);
+                   // debug2("Fallback translation loaded: $fallback_translation_path");
+                } else {
+                   // debug2("Fallback translation file not found: $fallback_translation_path");
+                }
+            } else {
+               // debug2("No fallback available for language: $language");
+            }
+        }
+
+    
+        // Log when the plugin is loaded
+        load_plugin_textdomain('restore-classic-widgets', false, plugin_basename(RESTORECLASSICPATH) . '/language/');
+       // debug2("Plugin text domain loaded.");
+    }
+    if ($restore_classic_widgets_is_admin) {
+        add_action('plugins_loaded', 'restore_classic_widgets_localization_init');
+    }
 
 
 function restore_classic_widgets_bill_more()
@@ -246,50 +306,3 @@ function restore_classic_widgets_bill_install()
 }
 add_action('wp_loaded', 'restore_classic_widgets_bill_install', 15);
 
-// language
-
-function restore_classic_widgets_localization_init()
-{
-    $path = RESTORECLASSICPATH . 'language/';
-    $locale = apply_filters('plugin_locale', determine_locale(), 'restore_classic-widgets');
-
-    // Full path of the specific translation file (e.g., es_AR.mo)
-    $specific_translation_path = $path . "restore_classic-widgets-$locale.mo";
-    $specific_translation_loaded = false;
-
-    // Check if the specific translation file exists and try to load it
-    if (file_exists($specific_translation_path)) {
-        $specific_translation_loaded = load_textdomain('restore_classic-widgets', $specific_translation_path);
-    }
-
-    // List of languages that should have a fallback to a specific locale
-    $fallback_locales = [
-        'de' => 'de_DE',  // German
-        'fr' => 'fr_FR',  // French
-        'it' => 'it_IT',  // Italian
-        'es' => 'es_ES',  // Spanish
-        'pt' => 'pt_BR',  // Portuguese (fallback to Brazil)
-        'nl' => 'nl_NL'   // Dutch (fallback to Netherlands)
-    ];
-
-    // If the specific translation was not loaded, try to fallback to the generic version
-    if (!$specific_translation_loaded) {
-        $language = explode('_', $locale)[0];  // Get only the language code, ignoring the country (e.g., es from es_AR)
-
-        if (array_key_exists($language, $fallback_locales)) {
-            // Full path of the generic fallback translation file (e.g., es_ES.mo)
-            $fallback_translation_path = $path . "restore_classic-widgets-{$fallback_locales[$language]}.mo";
-
-            // Check if the fallback generic file exists and try to load it
-            if (file_exists($fallback_translation_path)) {
-                load_textdomain('restore_classic-widgets', $fallback_translation_path);
-            }
-        }
-    }
-
-    // Load the plugin
-    load_plugin_textdomain('restore_classic-widgets', false, plugin_basename(RESTORECLASSICPATH) . '/language/');
-}
-if ($restore_classic_widgets_is_admin) {
-    add_action('plugins_loaded', 'restore_classic_widgets_localization_init');
-}
