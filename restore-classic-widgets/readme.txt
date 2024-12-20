@@ -9,12 +9,12 @@ Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.7
-Stable tag: 4.33
-Version: 4.33
+Stable tag: 4.34
+Version: 4.34
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-*/
+
 Activate this plugin to restore and enable the previous classic widgets settings screens. No expiration date.
 
 == Description ==
@@ -202,8 +202,8 @@ For backing up or importing WordPress widgets, using the "Restore Classic Widget
 When using our chat, only some information about issues, such as your language and data from the Diagnose tab, may be sent to our server. We do not share, publish, or disclose any information with third parties.
 
 == Changelog ==
-** 4.32 2024-12-19 - added chat with IA to help with issues.
-** 4.31 2024-10-23 - Small Improvements on error handling.
+** 4.33/34 2024-12-19 - added chat with IA to help with issues.
+** 4.32 2024-10-23 - Small Improvements on error handling.
 ** 4.31 2024-08-12 - Small Improvements.
 ** 4.30 2024-08-02 - Small Improvements.
 ** 4.27/28 2024-07-31 - Small Improvements.
