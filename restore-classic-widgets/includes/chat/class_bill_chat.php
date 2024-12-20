@@ -151,7 +151,7 @@ class ChatPlugin
                     // error_log($bill_chat_erros);
                 }
                 // Incluir ferramenta adicional
-                include_once STOPBADBOTSPATH . 'dashboard/tools.php';
+                include_once RESTORECLASSICPATH . 'dashboard/tools.php';
                 $restore_classic_widgets_checkup = restore_classic_widgets_sysinfo_get();
             } catch (Exception $e) {
                 // Captura qualquer exceção lançada e registra no log
