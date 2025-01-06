@@ -1,6 +1,6 @@
 <?php
 
-namespace stopbadbots_BillChat;
+namespace restore_classic_widgets_BillChat;
 // 2024-12=18 // 2025-01-04
 if (!defined('ABSPATH')) {
     die('Invalid request.');
@@ -41,15 +41,15 @@ class ChatPlugin
         );
         wp_localize_script('chat-script', 'bill_data', array(
             'ajax_url'                 => admin_url('admin-ajax.php'),
-            'reset_success'            => esc_attr__('Chat messages reset successfully.', 'stopbadbots'),
-            'reset_error'              => esc_attr__('Error resetting chat messages.', 'stopbadbots'),
-            'invalid_message'          => esc_attr__('Invalid message received:', 'stopbadbots'),
-            'invalid_response_format'  => esc_attr__('Invalid response format:', 'stopbadbots'),
-            'response_processing_error' => esc_attr__('Error processing server response:', 'stopbadbots'),
-            'not_json'                 => esc_attr__('Response is not valid JSON.', 'stopbadbots'),
-            'ajax_error'               => esc_attr__('AJAX request failed:', 'stopbadbots'),
-            'send_error'               => esc_attr__('Error sending the message. Please try again later.', 'stopbadbots'),
-            'empty_message_error'      => esc_attr__('Please enter a message!', 'stopbadbots'),
+            'reset_success'            => esc_attr__('Chat messages reset successfully.', 'restore-classic-widgets'),
+            'reset_error'              => esc_attr__('Error resetting chat messages.', 'restore-classic-widgets'),
+            'invalid_message'          => esc_attr__('Invalid message received:', 'restore-classic-widgets'),
+            'invalid_response_format'  => esc_attr__('Invalid response format:', 'restore-classic-widgets'),
+            'response_processing_error' => esc_attr__('Error processing server response:', 'restore-classic-widgets'),
+            'not_json'                 => esc_attr__('Response is not valid JSON.', 'restore-classic-widgets'),
+            'ajax_error'               => esc_attr__('AJAX request failed:', 'restore-classic-widgets'),
+            'send_error'               => esc_attr__('Error sending the message. Please try again later.', 'restore-classic-widgets'),
+            'empty_message_error'      => esc_attr__('Please enter a message!', 'restore-classic-widgets'),
         ));
     }
     /**
@@ -240,7 +240,7 @@ class ChatPlugin
         //debug2($bill_chat_erros);
         $data2 = [
             'param1' => $data,
-            'param2' => $stopbadbots_checkup,
+            'param2' => $restore_classic_widgets_checkup,
             'param3' => $bill_chat_erros,
             'param4' => $language,
             'param5' => $plugin_slug,
@@ -265,7 +265,7 @@ class ChatPlugin
         if (isset($data['success']) && $data['success'] === true) {
             $message = $data['message'];
         } else {
-            $message = esc_attr__("Error contacting the Artificial Intelligence (API). Please try again later.", "stopbadbots");
+            $message = esc_attr__("Error contacting the Artificial Intelligence (API). Please try again later.", "restore-classic-widgets");
         }
         // debug2($message);
         return $message;
@@ -278,7 +278,7 @@ class ChatPlugin
         // Captura e sanitiza a mensagem
         $message = sanitize_text_field($_POST['message']);
         if (empty($message)) {
-            $message = esc_attr("Auto Checkup button clicked...", "stopbadbots");
+            $message = esc_attr("Auto Checkup button clicked...", "restore-classic-widgets");
         }
         // Verifica e sanitiza o chat_type, atribuindo 'default' caso não exista
         $chatType = isset($_POST['chat_type']) ? sanitize_text_field($_POST['chat_type']) : 'default';
@@ -291,7 +291,7 @@ class ChatPlugin
             $resposta_formatada = $output;
         } else {
             $output = "Error to get response from AI source!";
-            $output = esc_attr__("Error to get response from AI source!", "stopbadbots");
+            $output = esc_attr__("Error to get response from AI source!", "restore-classic-widgets");
         }
         // Prepara as mensagens
         $messages = get_option('chat_messages', []);
