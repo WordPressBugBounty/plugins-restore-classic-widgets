@@ -1,5 +1,6 @@
 jQuery(document).ready(function ($) {
     // console.log("Loaded Chat");
+    let chatVersion = "2.00"; // This can be updated as needed.
     const billChatMessages = $('#chat-messages'); // Div where messages are displayed
     const billChatForm = $('#chat-form');        // Submission form
     const billChatInput = $('#chat-input');      // Message input field
@@ -45,6 +46,8 @@ jQuery(document).ready(function ($) {
                                     if (message.sender === 'user') {
                                         billChatMessages.append('<div class="user-message">' + billChatEscapeHtml(message.text) + '</div>');
                                     } else if (message.sender === 'chatgpt') {
+                                        message.text - billChatEscapeHtml(message.text);
+                                        message.text = message.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                                         billChatMessages.append('<div class="chatgpt-message">' + message.text + '</div>');
                                     }
                                 } else {
@@ -136,11 +139,14 @@ jQuery(document).ready(function ($) {
             },
         });
     }
-    billChatForm.on('submit', function (e) {
+    // billChatForm.on('submit', function (e) {
+    $('#chat-form button').on('click', function (e) {
         e.preventDefault();
+        const clickedButtonId = $(this).attr('id'); // Identifica qual botão foi clicado
         const message = billChatInput.val().trim();
+        const chatType = clickedButtonId === 'auto-checkup' ? 'auto-checkup' : ($('#chat-type').length ? $('#chat-type').val() : 'default');
         const billChaterrorMessage = $('#error-message');
-        if (message !== '') {
+        if ((chatType === 'auto-checkup') || (chatType !== 'auto-checkup' && message !== '')) {
             $('.spinner999').css('display', 'block');
             $('#chat-form button').prop('disabled', true);
             $.ajax({
@@ -148,7 +154,9 @@ jQuery(document).ready(function ($) {
                 method: 'POST',
                 data: {
                     action: 'bill_chat_send_message',
-                    message: message
+                    message: message,
+                    chat_type: chatType,
+                    chat_version: chatVersion
                 },
                 timeout: 60000,
                 success: function () {
@@ -166,6 +174,7 @@ jQuery(document).ready(function ($) {
                 }
             });
         } else {
+            // alert('nao ok');
             billChaterrorMessage.text(bill_data.empty_message_error).show();
             setTimeout(() => billChaterrorMessage.fadeOut(), 3000);
         }

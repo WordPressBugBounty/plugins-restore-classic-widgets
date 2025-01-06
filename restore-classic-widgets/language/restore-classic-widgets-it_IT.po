@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Restore Classic Widgets\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-19 10:35+0000\n"
-"PO-Revision-Date: 2024-12-19 12:31+0000\n"
+"POT-Creation-Date: 2025-01-06 12:02+0000\n"
+"PO-Revision-Date: 2025-01-06 12:08+0000\n"
 "Last-Translator: \n"
-"Language-Team: Italiano\n"
+"Language-Team: Italian\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,54 +23,64 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: includes/chat/class_bill_chat.php:43
+#: dashboard/tools.php:30 includes/dashboard/tools.php:30
+msgid "If you need support, please, copy and paste the info below in our"
+msgstr ""
+"Se hai bisogno di supporto, ti preghiamo di copiare e incollare le "
+"informazioni qui sotto nel nostro"
+
+#: dashboard/tools.php:31 includes/dashboard/tools.php:31
+msgid "Support Site"
+msgstr "Pagina di supporto"
+
+#: includes/chat/class_bill_chat.php:44
 msgid "Chat messages reset successfully."
 msgstr "I messaggi della chat sono stati reimpostati correttamente."
 
-#: includes/chat/class_bill_chat.php:44
+#: includes/chat/class_bill_chat.php:45
 msgid "Error resetting chat messages."
 msgstr "Errore durante la reimpostazione dei messaggi della chat."
 
-#: includes/chat/class_bill_chat.php:45
+#: includes/chat/class_bill_chat.php:46
 msgid "Invalid message received:"
 msgstr "Messaggio non valido ricevuto:"
 
-#: includes/chat/class_bill_chat.php:46
+#: includes/chat/class_bill_chat.php:47
 msgid "Invalid response format:"
 msgstr "Formato di risposta non valido:"
 
-#: includes/chat/class_bill_chat.php:47
+#: includes/chat/class_bill_chat.php:48
 msgid "Error processing server response:"
 msgstr "Errore durante l'elaborazione della risposta del server:"
 
-#: includes/chat/class_bill_chat.php:48
+#: includes/chat/class_bill_chat.php:49
 msgid "Response is not valid JSON."
 msgstr "La risposta non è un JSON valido."
 
-#: includes/chat/class_bill_chat.php:49
+#: includes/chat/class_bill_chat.php:50
 msgid "AJAX request failed:"
 msgstr "Richiesta AJAX fallita:"
 
-#: includes/chat/class_bill_chat.php:50
+#: includes/chat/class_bill_chat.php:51
 msgid "Error sending the message. Please try again later."
 msgstr "Errore durante l'invio del messaggio. Riprova più tardi."
 
-#: includes/chat/class_bill_chat.php:51
+#: includes/chat/class_bill_chat.php:52
 msgid "Please enter a message!"
 msgstr "Inserisci un messaggio!"
 
-#: includes/chat/class_bill_chat.php:211
+#: includes/chat/class_bill_chat.php:268
 msgid ""
 "Error contacting the Artificial Intelligence (API). Please try again later."
 msgstr ""
 "Errore durante il contatto con l'intelligenza artificiale (API). Riprova più "
 "tardi."
 
-#: includes/chat/class_bill_chat.php:230
+#: includes/chat/class_bill_chat.php:294
 msgid "Error to get response from AI source!"
 msgstr "Errore durante l'ottenimento della risposta dalla fonte AI!"
 
-#: includes/diagnose/class_bill_diagnose.php:87
+#: includes/diagnose/class_bill_diagnose.php:82
 msgid ""
 "Here are some details about error and memory monitoring for your plugin. "
 "Errors and low memory can prevent your site from functioning properly. On "
@@ -89,19 +99,19 @@ msgstr ""
 "Se hai bisogno di approfondire, installa il plugin gratuito WPTools, che "
 "fornisce approfondimenti più approfonditi."
 
-#: includes/diagnose/class_bill_diagnose.php:95
+#: includes/diagnose/class_bill_diagnose.php:89
 msgid "Memory & Error Monitoring"
 msgstr "Monitoraggio della memoria e degli errori"
 
-#: includes/diagnose/class_bill_diagnose.php:96
+#: includes/diagnose/class_bill_diagnose.php:90
 msgid "Welcome to plugin Insights!"
 msgstr "Benvenuti al plugin Insights!"
 
-#: includes/diagnose/class_bill_diagnose.php:760
+#: includes/diagnose/class_bill_diagnose.php:471
 msgid "Our plugin"
 msgstr "Il nostro plugin"
 
-#: includes/diagnose/class_bill_diagnose.php:762
+#: includes/diagnose/class_bill_diagnose.php:473
 msgid ""
 "cannot function properly because your WordPress Memory Limit is too low. "
 "Your site will experience serious issues, even if you deactivate our plugin."
@@ -110,16 +120,16 @@ msgstr ""
 "troppo basso. Il tuo sito avrà seri problemi, anche se disattivi il nostro "
 "plugin."
 
-#: includes/diagnose/class_bill_diagnose.php:768
+#: includes/diagnose/class_bill_diagnose.php:479
 msgid "Learn more"
 msgstr "Saperne di più"
 
-#: includes/diagnose/class_bill_diagnose.php:811
+#: includes/diagnose/class_bill_diagnose.php:497
 msgctxt "Site Health"
 msgid "Critical Issues"
 msgstr "Problemi critici"
 
-#: includes/diagnose/class_bill_diagnose.php:852
+#: includes/diagnose/class_bill_diagnose.php:527
 msgid ""
 "Displaying the latest recurring errors (Javascript Included) from your error "
 "log file and eventually alert about low WordPress memory limit is a courtesy "
@@ -129,7 +139,7 @@ msgstr ""
 "file di registro degli errori e l'eventuale avviso sul limite di memoria "
 "basso di WordPress sono una cortesia del plugin"
 
-#: includes/diagnose/class_bill_diagnose.php:854
+#: includes/diagnose/class_bill_diagnose.php:529
 msgid ""
 "Disabling our plugin does not stop the errors from occurring; it simply "
 "means you will no longer be notified here that they are happening, but they "
@@ -139,7 +149,7 @@ msgstr ""
 "significa semplicemente che non sarai più avvisato che si stanno "
 "verificando, ma potrebbero comunque danneggiare il tuo sito."
 
-#: includes/diagnose/class_bill_diagnose.php:856
+#: includes/diagnose/class_bill_diagnose.php:531
 msgid ""
 "Click the help button in the top right or go directly to the AI chat box "
 "below for more specific information on the issues listed."
@@ -148,36 +158,48 @@ msgstr ""
 "pulsante della guida in alto a destra o andare direttamente alla casella "
 "della chat AI qui sotto."
 
-#: includes/diagnose/class_bill_diagnose.php:865
+#: includes/diagnose/class_bill_diagnose.php:538
 msgid "Artificial Intelligence Support Chat for Issues and Solutions"
 msgstr ""
 "Chat di supporto per l'intelligenza artificiale per problemi e soluzioni"
 
-#: includes/diagnose/class_bill_diagnose.php:874
+#: includes/diagnose/class_bill_diagnose.php:547
 msgid "Enter your message..."
 msgstr "Inserisci il tuo messaggio..."
 
-#: includes/diagnose/class_bill_diagnose.php:875
+#: includes/diagnose/class_bill_diagnose.php:548
 msgid "Send"
 msgstr "Inviare"
 
-#: includes/diagnose/class_bill_diagnose.php:892
+#: includes/diagnose/class_bill_diagnose.php:551
+msgid ""
+"Enter a message and click 'Send', or just click 'Auto Checkup' to analyze "
+"the site's error log."
+msgstr ""
+"Inserisci un messaggio e clicca su \"Invia\" oppure clicca semplicemente su "
+"\"Controllo automatico\" per analizzare il registro degli errori del sito."
+
+#: includes/diagnose/class_bill_diagnose.php:556
+msgid "Auto Checkup"
+msgstr "Controllo automatico"
+
+#: includes/diagnose/class_bill_diagnose.php:564
 msgid "Potential Problems"
 msgstr "Potenziali problemi"
 
-#: includes/diagnose/class_bill_diagnose.php:900
+#: includes/diagnose/class_bill_diagnose.php:572
 msgid "Low WordPress Memory Limit"
 msgstr "Limite di memoria basso di WordPress"
 
-#: includes/diagnose/class_bill_diagnose.php:913
+#: includes/diagnose/class_bill_diagnose.php:585
 msgid "Your usage now"
 msgstr "Il tuo utilizzo adesso"
 
-#: includes/diagnose/class_bill_diagnose.php:921
+#: includes/diagnose/class_bill_diagnose.php:593
 msgid "Total Php Server Memory"
 msgstr "Memoria totale del server PHP"
 
-#: includes/diagnose/class_bill_diagnose.php:930
+#: includes/diagnose/class_bill_diagnose.php:602
 #: includes/install-checkup/_class_bill_install.php:305
 #: includes/install-checkup/class_bill_install.php:324
 msgid ""
@@ -189,8 +211,8 @@ msgstr ""
 "problemi critici sul tuo sito a causa di risorse insufficienti. Risolvi "
 "subito questo problema prima di continuare."
 
-#: includes/diagnose/class_bill_diagnose.php:936
-#: includes/diagnose/class_bill_diagnose.php:974
+#: includes/diagnose/class_bill_diagnose.php:608
+#: includes/diagnose/class_bill_diagnose.php:629
 #: includes/install-checkup/_class_bill_install.php:314
 #: includes/install-checkup/_class_bill_install.php:383
 #: includes/install-checkup/class_bill_install.php:333
@@ -198,11 +220,11 @@ msgstr ""
 msgid "Learn More"
 msgstr "Saperne di più"
 
-#: includes/diagnose/class_bill_diagnose.php:965
+#: includes/diagnose/class_bill_diagnose.php:620
 msgid "Site Errors"
 msgstr "Errori del sito"
 
-#: includes/diagnose/class_bill_diagnose.php:970
+#: includes/diagnose/class_bill_diagnose.php:625
 msgid ""
 "Your site has experienced errors for the past 2 days. These errors, "
 "including JavaScript issues, can result in visual problems or disrupt "
@@ -216,11 +238,27 @@ msgstr ""
 "del sito. Gli errori di JavaScript possono terminare l'esecuzione di "
 "JavaScript, lasciando inutilizzabili tutti i comandi successivi."
 
-#: includes/diagnose/class_bill_diagnose.php:1028
+#: includes/diagnose/class_bill_diagnose.php:674
 msgid "This is a partial list of the errors found."
 msgstr "Questo è un elenco parziale degli errori riscontrati."
 
-#: includes/diagnose/class_bill_diagnose.php:1527
+#: includes/diagnose/class_bill_diagnose.php:686
+msgid "File not readable."
+msgstr "File non leggibile."
+
+#: includes/diagnose/class_bill_diagnose.php:691
+msgid "Size not determined."
+msgstr "Dimensioni non determinate."
+
+#: includes/diagnose/class_bill_diagnose.php:705
+msgid "Invalid size."
+msgstr "Dimensione non valida."
+
+#: includes/diagnose/class_bill_diagnose.php:729
+msgid "File Size: "
+msgstr "Dimensione file:"
+
+#: includes/diagnose/class_bill_diagnose.php:1093
 msgid ""
 "These are critical issues that can have a significant impact on your site's "
 "performance. They can cause many plugins and functionalities to malfunction "
@@ -232,7 +270,7 @@ msgstr ""
 "plugin e funzionalità e, in alcuni casi, rendere il tuo sito completamente "
 "inoperativo, a seconda della loro gravità. Risolvili tempestivamente."
 
-#: includes/diagnose/class_bill_diagnose.php:1533
+#: includes/diagnose/class_bill_diagnose.php:1098
 msgid "Critical Issues"
 msgstr "Problemi critici"
 
