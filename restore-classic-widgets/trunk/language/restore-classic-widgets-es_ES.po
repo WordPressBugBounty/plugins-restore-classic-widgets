@@ -1,0 +1,361 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Restore Classic Widgets\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-06 12:03+0000\n"
+"PO-Revision-Date: 2025-01-06 12:07+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish (Spain)\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: restore_classic_widgets.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Loco-Version: 2.6.14; wp-6.7.1\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: dashboard/tools.php:30 includes/dashboard/tools.php:30
+msgid "If you need support, please, copy and paste the info below in our"
+msgstr ""
+"Si necesita ayuda, por favor copie y pegue la siguiente información en "
+"nuestro"
+
+#: dashboard/tools.php:31 includes/dashboard/tools.php:31
+msgid "Support Site"
+msgstr "Página de soporte"
+
+#: includes/chat/class_bill_chat.php:44
+msgid "Chat messages reset successfully."
+msgstr "Los mensajes de chat se restablecieron correctamente."
+
+#: includes/chat/class_bill_chat.php:45
+msgid "Error resetting chat messages."
+msgstr "Error al restablecer los mensajes de chat."
+
+#: includes/chat/class_bill_chat.php:46
+msgid "Invalid message received:"
+msgstr "Mensaje no válido recibido:"
+
+#: includes/chat/class_bill_chat.php:47
+msgid "Invalid response format:"
+msgstr "Formato de respuesta no válido:"
+
+#: includes/chat/class_bill_chat.php:48
+msgid "Error processing server response:"
+msgstr "Error al procesar la respuesta del servidor:"
+
+#: includes/chat/class_bill_chat.php:49
+msgid "Response is not valid JSON."
+msgstr "La respuesta no es un JSON válido."
+
+#: includes/chat/class_bill_chat.php:50
+msgid "AJAX request failed:"
+msgstr "La solicitud AJAX falló:"
+
+#: includes/chat/class_bill_chat.php:51
+msgid "Error sending the message. Please try again later."
+msgstr "Error al enviar el mensaje. Inténtalo de nuevo más tarde."
+
+#: includes/chat/class_bill_chat.php:52
+msgid "Please enter a message!"
+msgstr "¡Por favor ingrese un mensaje!"
+
+#: includes/chat/class_bill_chat.php:268
+msgid ""
+"Error contacting the Artificial Intelligence (API). Please try again later."
+msgstr ""
+"Error al contactar con la Inteligencia Artificial (API). Inténtalo de nuevo "
+"más tarde."
+
+#: includes/chat/class_bill_chat.php:294
+msgid "Error to get response from AI source!"
+msgstr "¡Error al obtener respuesta de la fuente de IA!"
+
+#: includes/diagnose/class_bill_diagnose.php:82
+msgid ""
+"Here are some details about error and memory monitoring for your plugin. "
+"Errors and low memory can prevent your site from functioning properly. On "
+"this page, you will find a partial list of the most recent errors and "
+"warnings. If you need more details, use the chat form, which will search for "
+"additional information using Artificial Intelligence.  \n"
+"If you need to dive deeper, install the free plugin WPTools, which provides "
+"more in-depth insights."
+msgstr ""
+"Aquí encontrará algunos detalles sobre el monitoreo de errores y memoria de "
+"su complemento. Los errores y la memoria insuficiente pueden impedir que su "
+"sitio funcione correctamente. En esta página, encontrará una lista parcial "
+"de los errores y advertencias más recientes. Si necesita más detalles, "
+"utilice el formulario de chat, que buscará información adicional mediante "
+"inteligencia artificial. \n"
+"Si necesita profundizar, instale el complemento gratuito WPTools, que brinda "
+"información más detallada."
+
+#: includes/diagnose/class_bill_diagnose.php:89
+msgid "Memory & Error Monitoring"
+msgstr "Monitoreo de memoria y errores"
+
+#: includes/diagnose/class_bill_diagnose.php:90
+msgid "Welcome to plugin Insights!"
+msgstr "¡Bienvenido al complemento Insights!"
+
+#: includes/diagnose/class_bill_diagnose.php:471
+msgid "Our plugin"
+msgstr "Nuestro complemento"
+
+#: includes/diagnose/class_bill_diagnose.php:473
+msgid ""
+"cannot function properly because your WordPress Memory Limit is too low. "
+"Your site will experience serious issues, even if you deactivate our plugin."
+msgstr ""
+"No puede funcionar correctamente porque el límite de memoria de WordPress es "
+"demasiado bajo. Su sitio experimentará problemas graves, incluso si "
+"desactiva nuestro complemento."
+
+#: includes/diagnose/class_bill_diagnose.php:479
+msgid "Learn more"
+msgstr "Más información"
+
+#: includes/diagnose/class_bill_diagnose.php:497
+msgctxt "Site Health"
+msgid "Critical Issues"
+msgstr "Cuestiones críticas"
+
+#: includes/diagnose/class_bill_diagnose.php:527
+msgid ""
+"Displaying the latest recurring errors (Javascript Included) from your error "
+"log file and eventually alert about low WordPress memory limit is a courtesy "
+"of plugin"
+msgstr ""
+"Mostrar los últimos errores recurrentes (Javascript incluido) de su archivo "
+"de registro de errores y eventualmente alertar sobre el límite bajo de "
+"memoria de WordPress es una cortesía del complemento"
+
+#: includes/diagnose/class_bill_diagnose.php:529
+msgid ""
+"Disabling our plugin does not stop the errors from occurring; it simply "
+"means you will no longer be notified here that they are happening, but they "
+"can still harm your site."
+msgstr ""
+"Deshabilitar nuestro complemento no evita que se produzcan errores; "
+"simplemente significa que ya no recibirá notificaciones aquí sobre su "
+"ocurrencia, pero aún pueden dañar su sitio."
+
+#: includes/diagnose/class_bill_diagnose.php:531
+msgid ""
+"Click the help button in the top right or go directly to the AI chat box "
+"below for more specific information on the issues listed."
+msgstr ""
+"Haga clic en el botón de ayuda en la parte superior derecha o vaya "
+"directamente al cuadro de chat de IA a continuación para obtener información "
+"más específica sobre los problemas enumerados."
+
+#: includes/diagnose/class_bill_diagnose.php:538
+msgid "Artificial Intelligence Support Chat for Issues and Solutions"
+msgstr "Chat de soporte de inteligencia artificial para problemas y soluciones"
+
+#: includes/diagnose/class_bill_diagnose.php:547
+msgid "Enter your message..."
+msgstr "Ingrese su mensaje..."
+
+#: includes/diagnose/class_bill_diagnose.php:548
+msgid "Send"
+msgstr "Enviar"
+
+#: includes/diagnose/class_bill_diagnose.php:551
+msgid ""
+"Enter a message and click 'Send', or just click 'Auto Checkup' to analyze "
+"the site's error log."
+msgstr ""
+"Ingrese un mensaje y haga clic en “Enviar”, o simplemente haga clic en "
+"“Revisión automática” para analizar el registro de errores del sitio."
+
+#: includes/diagnose/class_bill_diagnose.php:556
+msgid "Auto Checkup"
+msgstr "Revisión del auto"
+
+#: includes/diagnose/class_bill_diagnose.php:564
+msgid "Potential Problems"
+msgstr "Problemas potenciales"
+
+#: includes/diagnose/class_bill_diagnose.php:572
+msgid "Low WordPress Memory Limit"
+msgstr "Límite de memoria bajo de WordPress"
+
+#: includes/diagnose/class_bill_diagnose.php:585
+msgid "Your usage now"
+msgstr "Su uso ahora"
+
+#: includes/diagnose/class_bill_diagnose.php:593
+msgid "Total Php Server Memory"
+msgstr "Memoria total del servidor PHP"
+
+#: includes/diagnose/class_bill_diagnose.php:602
+#: includes/install-checkup/_class_bill_install.php:305
+#: includes/install-checkup/class_bill_install.php:324
+msgid ""
+"Your WordPress Memory Limit is too low, which can lead to critical issues on "
+"your site due to insufficient resources. Promptly address this issue before "
+"continuing."
+msgstr ""
+"El límite de memoria de WordPress es demasiado bajo, lo que puede provocar "
+"problemas graves en el sitio debido a la falta de recursos. Solucione este "
+"problema de inmediato antes de continuar."
+
+#: includes/diagnose/class_bill_diagnose.php:608
+#: includes/diagnose/class_bill_diagnose.php:629
+#: includes/install-checkup/_class_bill_install.php:314
+#: includes/install-checkup/_class_bill_install.php:383
+#: includes/install-checkup/class_bill_install.php:333
+#: includes/install-checkup/class_bill_install.php:402
+msgid "Learn More"
+msgstr "Más información"
+
+#: includes/diagnose/class_bill_diagnose.php:620
+msgid "Site Errors"
+msgstr "Errores del sitio"
+
+#: includes/diagnose/class_bill_diagnose.php:625
+msgid ""
+"Your site has experienced errors for the past 2 days. These errors, "
+"including JavaScript issues, can result in visual problems or disrupt "
+"functionality, ranging from minor glitches to critical site failures. "
+"JavaScript errors can terminate JavaScript execution, leaving all subsequent "
+"commands inoperable."
+msgstr ""
+"Tu sitio ha experimentado errores durante los últimos 2 días. Estos errores, "
+"incluidos los de JavaScript, pueden provocar problemas visuales o "
+"interrumpir la funcionalidad, desde fallas menores hasta fallas críticas del "
+"sitio. Los errores de JavaScript pueden interrumpir la ejecución de "
+"JavaScript y dejar inoperativos todos los comandos posteriores."
+
+#: includes/diagnose/class_bill_diagnose.php:674
+msgid "This is a partial list of the errors found."
+msgstr "Esta es una lista parcial de los errores encontrados."
+
+#: includes/diagnose/class_bill_diagnose.php:686
+msgid "File not readable."
+msgstr "Archivo no legible."
+
+#: includes/diagnose/class_bill_diagnose.php:691
+msgid "Size not determined."
+msgstr "Tamaño no determinado."
+
+#: includes/diagnose/class_bill_diagnose.php:705
+msgid "Invalid size."
+msgstr "Tamaño inválido."
+
+#: includes/diagnose/class_bill_diagnose.php:729
+msgid "File Size: "
+msgstr "Tamaño del archivo:"
+
+#: includes/diagnose/class_bill_diagnose.php:1093
+msgid ""
+"These are critical issues that can have a significant impact on your site's "
+"performance. They can cause many plugins and functionalities to malfunction "
+"and, in some cases, render your site completely inoperative, depending on "
+"their severity. Address them promptly."
+msgstr ""
+"Se trata de problemas críticos que pueden tener un impacto significativo en "
+"el rendimiento de su sitio. Pueden provocar que muchos complementos y "
+"funcionalidades no funcionen correctamente y, en algunos casos, dejar su "
+"sitio completamente inoperativo, según su gravedad. Trate de solucionarlos "
+"de inmediato."
+
+#: includes/diagnose/class_bill_diagnose.php:1098
+msgid "Critical Issues"
+msgstr "Cuestiones críticas"
+
+#: includes/feedback-last/feedback-last.php:254
+msgid "We're sorry to hear that you're leaving."
+msgstr "Lamentamos saber que te vas."
+
+#: includes/feedback-last/feedback-last.php:256
+msgid "Hello,"
+msgstr "Hola,"
+
+#: includes/feedback-last/feedback-last.php:260
+msgid ""
+"Thank you for using our products. Before you deactivate, we'd like to offer "
+"a few options to improve your experience:"
+msgstr ""
+"Gracias por utilizar nuestros productos. Antes de desactivarlos, nos "
+"gustaría ofrecerle algunas opciones para mejorar su experiencia:"
+
+#: includes/feedback-last/feedback-last.php:263
+msgid "Explore more plugins - Discover our other free plugins and themes."
+msgstr ""
+"Explorar más complementos: descubra nuestros otros complementos y temas "
+"gratuitos."
+
+#: includes/feedback-last/feedback-last.php:265
+msgid "Support - Need help? Visit our support page."
+msgstr "Soporte - ¿Necesita ayuda? Visite nuestra página de soporte."
+
+#: includes/feedback-last/feedback-last.php:267
+msgid "Cancel deactivation - Changed your mind? Keep using this plugin."
+msgstr ""
+"Cancelar desactivación: ¿Cambió de opinión? Siga usando este complemento."
+
+#: includes/feedback-last/feedback-last.php:269
+msgid "Deactivate - Proceed with deactivation."
+msgstr "Desactivar - Proceder con la desactivación."
+
+#: includes/feedback-last/feedback-last.php:272
+msgid ""
+"Trusted by over 50,000 users, our 20+ free plugins and 6 themes can "
+"supercharge your site's security, functionality, and backups."
+msgstr ""
+"Más de 50 000 usuarios confían en nuestros más de 20 complementos gratuitos "
+"y 6 temas para potenciar la seguridad, la funcionalidad y las copias de "
+"seguridad de su sitio."
+
+#: includes/feedback-last/feedback-last.php:274
+msgid "Best regards!"
+msgstr "¡Atentamente!"
+
+#: includes/feedback-last/feedback-last.php:283
+msgid "Discover New FREE Plugins"
+msgstr "Descubra nuevos complementos GRATUITOS"
+
+#: includes/feedback-last/feedback-last.php:286
+msgid "Support Page"
+msgstr "Página de soporte"
+
+#: includes/feedback-last/feedback-last.php:289
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: includes/feedback-last/feedback-last.php:292
+msgid "Just Deactivate"
+msgstr "Solo desactivar"
+
+#. Plugin Name of the plugin/theme
+msgid "Restore Classic Widgets"
+msgstr "Restaurar widgets clásicos"
+
+#. Description of the plugin/theme
+msgid ""
+"Description: Restore and enable the previous classic widgets settings "
+"screens and disables the Gutenberg block editor from managing widgets. No "
+"expiration date."
+msgstr ""
+"Descripción: Restaura y habilita las pantallas de configuración de widgets "
+"clásicos anteriores y deshabilita el editor de bloques Gutenberg para "
+"administrar widgets. Sin fecha de vencimiento."
+
+#. Author of the plugin/theme
+msgid "Bill Minozzi"
+msgstr "Bill Minozzi"
+
+#. Author URI of the plugin/theme
+msgid "http://billminozzi.com"
+msgstr "http://billminozzi.com"

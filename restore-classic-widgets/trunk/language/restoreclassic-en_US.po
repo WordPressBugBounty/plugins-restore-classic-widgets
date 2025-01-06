@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Restore Classic Widgets\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-14 11:08+0000\n"
+"PO-Revision-Date: 2021-11-14 11:08+0000\n"
+"Last-Translator: \n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.5; wp-5.8.2\n"
+"X-Domain: restoreclassic"
+
+#: includes/more/more.php:41
+msgid "WP TOOLS FREE PLUGIN"
+msgstr ""
+
+#: includes/more/more.php:43
+msgid ""
+"Amazing Plugin from Same Author, Bill Minozzi, with more than 35 useful "
+"tools!"
+msgstr ""
+
+#: includes/more/more.php:44
+msgid "WP Tools FREE Plugin is a swiss army knife, "
+msgstr ""
+
+#: includes/more/more.php:53
+msgid "Install"
+msgstr ""
+
+#: includes/more/more.php:55
+msgid "More Details"
+msgstr ""
+
+#: includes/more/more.php:56
+msgid "Close"
+msgstr ""
+
+#. Name of the plugin
+msgid "Restore Classic Widgets"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Description: Restore and enable the previous classic widgets settings "
+"screens and disables the Gutenberg block editor from managing widgets."
+msgstr ""
+
+#. Author of the plugin
+msgid "Bill Minozzi"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://billminozzi.com"
+msgstr ""
