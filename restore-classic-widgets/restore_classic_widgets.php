@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore Classic Widgets
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.46
+Version: 4.48
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi

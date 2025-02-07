@@ -101,7 +101,7 @@ function bill_install_mu_plugin()
 
     $plugin_file = 'bill-catch-errors.php';
     //'bill-catch-errors.php'; // Name of the plugin file to be copied
-    $restore_classic_widgets_mu_plugin_dir = WP_PLUGIN_DIR . '/wp-memory/includes/mu-plugins'; // Current path inside restore_classic_widgets
+    $restore_classic_widgets_mu_plugin_dir = WP_PLUGIN_DIR . '/restore-classic-widgets/includes/mu-plugins'; // Current path inside restore_classic_widgets
     $mu_plugins_dir = WPMU_PLUGIN_DIR; // MU-Plugins directory
 
 
