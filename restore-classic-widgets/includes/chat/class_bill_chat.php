@@ -63,7 +63,6 @@ class ChatPlugin
 
     public function bill_chat_load_messages()
     {
-
         if (ob_get_length()) {
             ob_clean();
         }
@@ -87,6 +86,8 @@ class ChatPlugin
         ]);
         wp_die();
     }
+
+
     public function bill_chat_load_messages_NEW()
     {
         // Verifica se é uma solicitação AJAX
@@ -254,11 +255,11 @@ class ChatPlugin
         //debug2($bill_chat_erros);
         // \debug3();
 
-       //2025
-       $restore_classic_widgets_checkup = \restore_classic_widgets_sysinfo_get();
-      //  \debug3( \restore_classic_widgets_sysinfo_get());
+        //2025
+        $restore_classic_widgets_checkup = \restore_classic_widgets_sysinfo_get();
+        //  \debug3( \wp-memory_sysinfo_get());
 
-       //\debug3($restore_classic_widgets_checkup);
+        //\debug3($wp-memory_checkup);
 
 
 
@@ -289,7 +290,7 @@ class ChatPlugin
         if (isset($data['success']) && $data['success'] === true) {
             $message = $data['message'];
         } else {
-            $message = esc_attr__("Error contacting the Artificial Intelligence (API). Please try again later.", "restore-classic-widgets");
+            $message = esc_attr__("Error contacting the Artificial Intelligence (API). Please try again later.", 'restore-classic-widgets');
         }
         // debug2($message);
         return $message;
@@ -297,16 +298,34 @@ class ChatPlugin
     /**
      * Função para enviar a mensagem do usuário e obter a resposta do ChatGPT.
      */
+
+
     public function bill_chat_send_message()
     {
         // \debug3();
         // Captura e sanitiza a mensagem
         $message = sanitize_text_field($_POST['message']);
-        if (empty($message)) {
-            $message = esc_attr("Auto Checkup button clicked...", "restore-classic-widgets");
-        }
+
+
         // Verifica e sanitiza o chat_type, atribuindo 'default' caso não exista
         $chatType = isset($_POST['chat_type']) ? sanitize_text_field($_POST['chat_type']) : 'default';
+
+        if (empty($message)) {
+            if ($chatType == 'auto-checkup') {
+                $message = esc_attr("Auto Checkup for Erros button clicked...", 'restore-classic-widgets');
+            } elseif ($chatType == 'auto-checkup2') {
+                $message = esc_attr("Auto Checkup Server button clicked...", 'restore-classic-widgets');
+            }
+        }
+
+        //  if (empty($message)) {
+        //    $message = esc_attr("Auto Checkup button clicked...", 'restore-classic-widgets');
+        // }
+
+
+
+        // error_log(var_export($chatType));
+
         $chatVersion = isset($_POST['chat_version']) ? sanitize_text_field($_POST['chat_version']) : '1.00';
         // Chama a API e obtém a resposta
         $response_data = $this->bill_chat_call_chatgpt_api($message, $chatType, $chatVersion);
@@ -316,7 +335,7 @@ class ChatPlugin
             $resposta_formatada = $output;
         } else {
             $output = "Error to get response from AI source!";
-            $output = esc_attr__("Error to get response from AI source!", "restore-classic-widgets");
+            $output = esc_attr__("Error to get response from AI source!", 'restore-classic-widgets');
         }
         // Prepara as mensagens
         $messages = get_option('chat_messages', []);
@@ -331,6 +350,8 @@ class ChatPlugin
         update_option('chat_messages', $messages);
         wp_die();
     }
+
+
     /**
      * Função para resetar as mensagens.
      */

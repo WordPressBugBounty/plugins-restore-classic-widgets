@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore Classic Widgets
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.44
+Version: 4.45
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -124,6 +124,25 @@ if ($restore_classic_widgets_is_admin) {
     add_action('plugins_loaded', 'restore_classic_widgets_localization_init');
     require_once(RESTORECLASSICPATH . 'functions/function_sysinfo.php');
 }
+
+
+
+function restore_classic_widgets_add_admstylesheet()
+{
+    wp_enqueue_script('jquery-ui-core');
+    wp_enqueue_script('jquery-ui-dialog'); // Exemplo: carregar o diálogo do jQuery UI
+
+    // ui 
+    $wpmemory_jqueryurl = RESTORECLASSICURL . 'assets/css/jquery-ui.css';
+    wp_register_style('bill-jquery-ui', $wpmemory_jqueryurl, array(), '1.12.1', 'all');
+    wp_enqueue_style('bill-jquery-ui');
+}
+
+
+if ($restore_classic_widgets_is_admin) {
+    add_action('admin_init', 'restore_classic_widgets_add_admstylesheet');
+}
+
 
 
 function restore_classic_widgets_bill_more()
