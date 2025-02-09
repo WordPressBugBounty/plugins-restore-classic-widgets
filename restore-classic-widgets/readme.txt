@@ -9,8 +9,8 @@ Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.7
-Stable tag: 4.48
-Version: 4.48
+Stable tag: 4.49
+Version: 4.49
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -202,6 +202,7 @@ For backing up or importing WordPress widgets, using the "Restore Classic Widget
 When using our chat, only some information about issues, such as your language and data from the Diagnose tab, may be sent to our server. We do not share, publish, or disclose any information with third parties.
 
 == Changelog ==
+** 4.49 2025-02-09 - small Improvements.
 ** 4.45/48 2025-02-07 - added chat with IA Improved.
 ** 4.40/43 2025-01-08 - added chat with IA Improved.
 ** 4.36/39 2025-01-06 - added chat with IA Improved.
