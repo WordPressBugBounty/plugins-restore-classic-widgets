@@ -1,7 +1,7 @@
 <?php
 
 namespace restore_classic_widgets_BillDiagnose;
-// 2023-08 upd: 2023-10-17 2024-06=21 2024-31-12 2025-01-05
+// 2023-08 upd: 2023-10-17 2024-06=21 2024-31-12 2025-02-11
 if (!defined('ABSPATH')) {
     die('Invalid request.');
 }
@@ -9,8 +9,7 @@ if (function_exists('is_multisite') and is_multisite()) {
     return;
 }
 
-
-
+// debug4();
 
 /*
 // >>>>>>>>>>>>>>>> call
@@ -18,7 +17,7 @@ function restore_classic_widgets_bill_hooking_diagnose()
 {
     if (function_exists('is_admin') && function_exists('current_user_can')) {
         if(is_admin() and current_user_can("manage_options")){
-            $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
+            $notification_url = "https://restore_classic_widgets.com/fix-low-memory-limit/";
             $notification_url2 =
                 "https://wptoolsplugin.com/site-language-error-can-crash-your-site/";
             require_once dirname(__FILE__) . "/includes/diagnose/class_bill_diagnose.php";
@@ -81,13 +80,13 @@ function add_help_tab_to_screen()
         $hmessage = esc_attr__(
             'Here are some details about error and memory monitoring for your plugin. Errors and low memory can prevent your site from functioning properly. On this page, you will find a partial list of the most recent errors and warnings. If you need more details, use the chat form, which will search for additional information using Artificial Intelligence.  
 If you need to dive deeper, install the free plugin WPTools, which provides more in-depth insights.',
-            'restore-classic-widgets'
+            "restore-classic-widgets"
         );
         // Adiciona a aba de ajuda
         $screen->add_help_tab([
             'id'      => 'site-health', // ID único para a aba
-            'title'   => esc_attr__('Memory & Error Monitoring', 'restore-classic-widgets'), // Título da aba
-            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', 'restore-classic-widgets') . '</p>
+            'title'   => esc_attr__('Memory & Error Monitoring', "restore-classic-widgets"), // Título da aba
+            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', "restore-classic-widgets") . '</p>
                           <p>' . $hmessage . '</p>',
         ]);
     }
@@ -102,8 +101,22 @@ class ErrorChecker
         // add_action('admin_enqueue_scripts', array($this, 'enqueue_diagnose_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_diagnose_scripts'));
     }
+
+    public function limparString($string)
+    {
+        return preg_replace('/[[:^print:]]/', '', $string);
+    }
     public function bill_parseDate($dateString, $locale)
     {
+
+
+        if (isset($dateString) && !empty($dateString)) {
+            $dateString = trim($dateString); // Remover espaços extras
+            $dateString = ErrorChecker::limparString($dateString); // Remover caracteres invisíveis
+        } else {
+            return false;
+        }
+
         // Mapeamento de formatos de data por idioma
         $dateFormatsByLanguage = [
             'pt' => 'd/m/Y', // 31/12/2024 (Português)
@@ -115,10 +128,18 @@ class ErrorChecker
         ];
         // Extrai o código de idioma do locale (ex: 'pt_BR' -> 'pt')
         $language = substr($locale, 0, 2);
+        // debug4($language);
+
         // Obtém o formato de data correspondente ao idioma
         $format = $dateFormatsByLanguage[$language] ?? 'Y-m-d'; // Fallback para um formato padrão
         // Tenta criar o DateTime com o formato correspondente
+
+        // debug4($format);
+
         $date = \DateTime::createFromFormat($format, $dateString);
+
+        // debug4($date);
+
         if ($date !== false) {
             return $date;
         }
@@ -134,7 +155,10 @@ class ErrorChecker
         ];
         foreach ($possibleFormats as $format) {
             $date = \DateTime::createFromFormat($format, $dateString);
+            // debug4($date);
+            // debug4($format);
             if ($date !== false) {
+                // debug4($date);
                 return $date;
             }
         }
@@ -155,48 +179,127 @@ class ErrorChecker
         );
     }
 
+
+
+    /**
+     * Retrieves an array of paths to potential error log files.
+     *
+     * This function searches for common locations where error logs might be stored,
+     * including PHP error logs, WordPress root directory, plugin and theme directories,
+     * and the administration area.
+     *
+     * @return array An array of strings, where each string is a potential path to an error log file.
+     */
+    public static function get_path_logs()
+    {
+        $bill_folders = [];
+
+        // PHP error log (defined in php.ini)
+        $error_log_path = trim(ini_get("error_log"));
+        if (!is_null($error_log_path) && $error_log_path != trim(ABSPATH . "error_log")) {
+            $bill_folders[] = $error_log_path;
+        }
+
+        // Logs in WordPress root directory
+        $bill_folders[] = ABSPATH . "error_log";
+        $bill_folders[] = ABSPATH . "php_errorlog";
+        $bill_folders[] = WP_CONTENT_DIR . "/debug.log";
+
+        // Logs in current plugin directory
+        $bill_folders[] = plugin_dir_path(__FILE__) . "error_log";
+        $bill_folders[] = plugin_dir_path(__FILE__) . "php_errorlog";
+
+        // Logs in current theme directory
+        $bill_folders[] = get_theme_root() . "/error_log";
+        $bill_folders[] = get_theme_root() . "/php_errorlog";
+
+        // Logs in administration area (if it exists)
+        $bill_admin_path = str_replace(get_bloginfo("url") . "/", ABSPATH, get_admin_url());
+        $bill_folders[] = $bill_admin_path . "/error_log";
+        $bill_folders[] = $bill_admin_path . "/php_errorlog";
+
+
+
+
+
+
+
+
+
+        // Logs in plugin subdirectories
+        try {
+            $bill_plugins = array_slice(scandir(plugin_dir_path(__FILE__)), 2);
+            foreach ($bill_plugins as $bill_plugin) {
+                $plugin_path = plugin_dir_path(__FILE__) . $bill_plugin;
+                if (is_dir($plugin_path)) {
+                    $bill_folders[] = $plugin_path . "/error_log";
+                    $bill_folders[] = $plugin_path . "/php_errorlog";
+                }
+            }
+        } catch (Exception $e) {
+            // Handle the exception
+            error_log("Error scanning plugins directory: " . $e->getMessage());
+        }
+
+
+
+        // Logs in theme subdirectories
+        /*
+        $bill_themes = array_slice(scandir(get_theme_root()), 2);
+        foreach ($bill_themes as $bill_theme) {
+            $theme_path = get_theme_root() . "/" . $bill_theme;
+            if (is_dir($theme_path)) {
+                $bill_folders[] = $theme_path . "/error_log";
+                $bill_folders[] = $theme_path . "/php_errorlog";
+            }
+        }
+        */
+
+        try {
+            $bill_themes = array_slice(scandir(get_theme_root()), 2);
+
+
+            foreach ($bill_themes as $bill_theme) {
+                if (is_dir(get_theme_root() . "/" . $bill_theme)) {
+                    $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/error_log";
+                    $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/php_errorlog";
+                }
+            }
+        } catch (Exception $e) {
+            // Handle the exception
+            error_log("Error scanning theme directory: " . $e->getMessage());
+        }
+
+
+
+
+
+
+        return $bill_folders;
+    }
+
+
+
+
+
+
+
     public function bill_check_errors_today($num_days, $filter = null)
     {
         // return true;
 
 
         $bill_count = 0;
-        $bill_folders = [];
-        //$bill_themePath = get_theme_root();
-        $error_log_path = trim(ini_get("error_log"));
-        if (!is_null($error_log_path) and $error_log_path != trim(ABSPATH . "error_log")) {
-            $bill_folders[] = $error_log_path;
-        }
-        $bill_folders[] = ABSPATH . "error_log";
-        $bill_folders[] = ABSPATH . "php_errorlog";
-        $bill_folders[] = plugin_dir_path(__FILE__) . "/error_log";
-        $bill_folders[] = plugin_dir_path(__FILE__) . "/php_errorlog";
-        $bill_folders[] = get_theme_root() . "/error_log";
-        $bill_folders[] = get_theme_root() . "/php_errorlog";
-        // Adicionar caminhos específicos de administração se existirem
-        $bill_admin_path = str_replace(
-            get_bloginfo("url") . "/",
-            ABSPATH,
-            get_admin_url()
-        );
-        $bill_folders[] = $bill_admin_path . "/error_log";
-        $bill_folders[] = $bill_admin_path . "/php_errorlog";
-        $bill_folders[] = WP_CONTENT_DIR . "/debug.log";
-        // Adicionar diretórios de plugins
-        $bill_plugins = array_slice(scandir(plugin_dir_path(__FILE__)), 2);
-        foreach ($bill_plugins as $bill_plugin) {
-            if (is_dir(plugin_dir_path(__FILE__) . "/" . $bill_plugin)) {
-                $bill_folders[] = plugin_dir_path(__FILE__) . "/" . $bill_plugin . "/error_log";
-                $bill_folders[] = plugin_dir_path(__FILE__) . "/" . $bill_plugin . "/php_errorlog";
-            }
-        }
-        $bill_themes = array_slice(scandir(get_theme_root()), 2);
-        foreach ($bill_themes as $bill_theme) {
-            if (is_dir(get_theme_root() . "/" . $bill_theme)) {
-                $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/error_log";
-                $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/php_errorlog";
-            }
-        }
+
+
+
+
+
+        // $bill_folders = get_path_logs();
+        $bill_folders = ErrorChecker::get_path_logs();
+
+
+
         // Data limite para comparação
         //$dateThreshold = new DateTime('now');
         $dateThreshold = new \DateTime('now');
@@ -218,12 +321,19 @@ class ErrorChecker
         // Obtém o locale do WordPress
         $locale = get_locale(); // Exemplo: 'pt_BR', 'en_US', etc.
         $language = substr($locale, 0, 2); // Extrai o código de idioma (ex: 'pt', 'en')
-        // Itera sobre as pastas de faturas
+        // Itera sobre as pastas 
+
+        //debug4($bill_folders);
+
         foreach ($bill_folders as $bill_folder) {
             if (!empty($bill_folder) && file_exists($bill_folder) && filesize($bill_folder) > 0) {
+
+                //debug4($bill_folder);
+
                 $bill_count++;
                 $marray = $this->bill_read_file($bill_folder, 20);
                 if (is_array($marray) && !empty($marray)) {
+                    // debug4($marray);
                     foreach ($marray as $line) {
                         if (empty($line)) {
                             continue;
@@ -239,27 +349,39 @@ class ErrorChecker
                             if (preg_match($pattern, $line, $matches)) {
                                 try {
                                     // Usa a função parseDate para interpretar a data
-                                    // $date = bill_parseDate($matches[0], $locale);
+
+                                    // debug4($matches[0]);
+                                    // debug4($locale);
+
                                     $date = $this->bill_parseDate($matches[0], $locale);
 
-                                    if (!$date)
-                                        return false;
+                                    // debug4($date);
+
+                                    if (!$date) {
+                                        continue;
+                                    }
+
+                                    if (!$date instanceof \DateTime) {
+                                        continue;
+                                    }
+
                                     // Verifica se a data é anterior ao limite
-                                    // debug2($date);
+                                    // debug4($date);
+                                    // debug4($dateThreshold);
                                     if ($date < $dateThreshold) {
                                         // debug2('Antiga');
-                                        // debug2("Data antiga encontrada: " . $date->format('Y-m-d'));
+                                        // debug4("Data antiga encontrada: " . $date->format('Y-m-d'));
                                     } else {
-                                        // debug2('Data Nova encontrada');
+                                        // debug4('Data Nova encontrada');
                                         return true;
                                     }
                                 } catch (Exception $e) {
                                     // Ignorar linhas com datas inválidas
-                                    // debug2("Erro ao processar a data: " . $e->getMessage());
+                                    // debug4("Erro ao processar a data: " . $e->getMessage());
                                     continue;
                                 }
                             } else {
-                                // debug2('nao bateu');
+                                // debug4('nao bateu');
                             }
                         }
                         return false;
@@ -269,6 +391,7 @@ class ErrorChecker
         }
         return false;
     }
+
     public function bill_read_file($file, $lines)
     {
         $handle = fopen($file, "r");
@@ -322,67 +445,66 @@ class MemoryChecker
         try {
             // Check if ini_get function exists
             if (!function_exists('ini_get')) {
-                $wpmemory["msg_type"] = "notok";
-                return $wpmemory;
+                $restore_classic_widgets["msg_type"] = "notok";
+                return $restore_classic_widgets;
             } else {
                 // Get the PHP memory limit
-                $wpmemory["limit"] = (int) ini_get("memory_limit");
+                $restore_classic_widgets["limit"] = (int) ini_get("memory_limit");
             }
             // Check if the memory limit is numeric
-            if (!is_numeric($wpmemory["limit"])) {
-                $wpmemory["msg_type"] = "notok";
-                return $wpmemory;
+            if (!is_numeric($restore_classic_widgets["limit"])) {
+                $restore_classic_widgets["msg_type"] = "notok";
+                return $restore_classic_widgets;
             }
             // Convert the memory limit from bytes to megabytes if it is excessively high
-            if ($wpmemory["limit"] > 9999999) {
-                $wpmemory["limit"] = $wpmemory["limit"] / 1024 / 1024;
+            if ($restore_classic_widgets["limit"] > 9999999) {
+                $restore_classic_widgets["limit"] = $restore_classic_widgets["limit"] / 1024 / 1024;
             }
             // Check if memory_get_usage function exists
             if (!function_exists('memory_get_usage')) {
-                $wpmemory["msg_type"] = "notok";
-                return $wpmemory;
+                $restore_classic_widgets["msg_type"] = "notok";
+                return $restore_classic_widgets;
             } else {
                 // Get the current memory usage
-                $wpmemory["usage"] = memory_get_usage();
+                $restore_classic_widgets["usage"] = memory_get_usage();
             }
             // Check if the memory usage is valid
-            if ($wpmemory["usage"] < 1) {
-                $wpmemory["msg_type"] = "notok";
-                return $wpmemory;
+            if ($restore_classic_widgets["usage"] < 1) {
+                $restore_classic_widgets["msg_type"] = "notok";
+                return $restore_classic_widgets;
             } else {
                 // Convert the memory usage to megabytes
-                $wpmemory["usage"] = round($wpmemory["usage"] / 1024 / 1024, 0);
+                $restore_classic_widgets["usage"] = round($restore_classic_widgets["usage"] / 1024 / 1024, 0);
             }
             // Check if the usage value is numeric
-            if (!is_numeric($wpmemory["usage"])) {
-                $wpmemory["msg_type"] = "notok";
-                return $wpmemory;
+            if (!is_numeric($restore_classic_widgets["usage"])) {
+                $restore_classic_widgets["msg_type"] = "notok";
+                return $restore_classic_widgets;
             }
             // Check if restore_classic_widgets_LIMIT is defined
             if (!defined("WP_MEMORY_LIMIT")) {
-                $wpmemory["wp_limit"] = 40; // Default value of 40M
+                $restore_classic_widgets["wp_limit"] = 40; // Default value of 40M
             } else {
                 $restore_classic_widgets_limit = WP_MEMORY_LIMIT;
-                $wpmemory["wp_limit"] = (int) $restore_classic_widgets_limit;
+                $restore_classic_widgets["wp_limit"] = (int) $restore_classic_widgets_limit;
             }
             // Calculate the percentage of memory usage
-            $wpmemory["percent"] = $wpmemory["usage"] / $wpmemory["wp_limit"];
-            $wpmemory["color"] = "font-weight:normal;";
-            if ($wpmemory["percent"] > 0.7) {
-                $wpmemory["color"] = "font-weight:bold;color:#E66F00";
+            $restore_classic_widgets["percent"] = $restore_classic_widgets["usage"] / $restore_classic_widgets["wp_limit"];
+            $restore_classic_widgets["color"] = "font-weight:normal;";
+            if ($restore_classic_widgets["percent"] > 0.7) {
+                $restore_classic_widgets["color"] = "font-weight:bold;color:#E66F00";
             }
-            if ($wpmemory["percent"] > 0.85) {
-                $wpmemory["color"] = "font-weight:bold;color:red";
+            if ($restore_classic_widgets["percent"] > 0.85) {
+                $restore_classic_widgets["color"] = "font-weight:bold;color:red";
             }
             // Calculate the available free memory
-            $wpmemory["free"] = $wpmemory["wp_limit"] - $wpmemory["usage"];
-            $wpmemory["msg_type"] = "ok";
+            $restore_classic_widgets["free"] = $restore_classic_widgets["wp_limit"] - $restore_classic_widgets["usage"];
+            $restore_classic_widgets["msg_type"] = "ok";
         } catch (Exception $e) {
-            $wpmemory["msg_type"] = "notok";
-            return $wpmemory;
+            $restore_classic_widgets["msg_type"] = "notok";
+            return $restore_classic_widgets;
         }
-        //debug4($wpmemory);
-        return $wpmemory;
+        return $restore_classic_widgets;
     }
 }
 class restore_classic_widgets_Bill_Diagnose
@@ -402,12 +524,11 @@ class restore_classic_widgets_Bill_Diagnose
         //$this->global_variable_has_errors = $this->bill_check_errors_today();
         $errorChecker = new ErrorChecker(); //
         //
-        $this->global_variable_has_errors  = $errorChecker->bill_check_errors_today(1);
+        $this->global_variable_has_errors  = $errorChecker->bill_check_errors_today(3);
 
 
 
-
-        //  \debug3($this->global_variable_has_errors);
+        //debug4($this->global_variable_has_errors);
 
 
         // NOT same class
@@ -418,15 +539,13 @@ class restore_classic_widgets_Bill_Diagnose
         add_action("admin_notices", [$this, "show_dismissible_notification"]);
         //add_action("admin_notices", [$this, "show_dismissible_notification2"]);
         // 2024
+        // debug4($this->global_variable_has_errors);
         if ($this->global_variable_has_errors) {
             add_action("admin_bar_menu", [$this, "add_site_health_link_to_admin_toolbar"], 999);
             // debug2('global_variable_has_errors');
         }
         add_action("admin_head", [$this, "custom_help_tab"]);
         $memory = $this->global_variable_memory;
-
-        //debug4($memory);
-
         if (
             $memory["free"] < 30 or
             $memory["percent"] > 0.85 or
@@ -503,19 +622,18 @@ class restore_classic_widgets_Bill_Diagnose
             return;
         }
         $memory = $this->global_variable_memory;
-        //debug4($memory);
-        if ($memory["free"] > 30 and $wpmemory["percent"] < 0.85) {
+        if ($memory["free"] > 30 and $restore_classic_widgets["percent"] < 0.85) {
             return;
         }
-        $message = esc_attr__("Our plugin", 'restore-classic-widgets');
+        $message = esc_attr__("Our plugin", "restore-classic-widgets");
         $message .= ' (' . $this->plugin_slug . ') ';
-        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", 'restore-classic-widgets');
+        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", "restore-classic-widgets");
         $message .=
             '<a href="' .
             esc_url($this->notification_url) .
             '">' .
             " " .
-            esc_attr__("Learn more", 'restore-classic-widgets') .
+            esc_attr__("Learn more", "restore-classic-widgets") .
             "</a>";
         echo '<div class="notice notice-error is-dismissible">';
         echo '<p style="color: red;">' . wp_kses_post($message) . "</p>";
@@ -535,7 +653,7 @@ class restore_classic_widgets_Bill_Diagnose
         $tabs["Critical Issues"] = esc_html_x(
             "Critical Issues",
             "Site Health",
-            'restore-classic-widgets'
+            "restore-classic-widgets"
         );
         return $tabs;
     }
@@ -563,11 +681,11 @@ class restore_classic_widgets_Bill_Diagnose
             <p style="border: 1px solid red; padding: 10px;">
                 <strong>
                     <?php
-                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", 'restore-classic-widgets');
+                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", "restore-classic-widgets");
                     echo ': ' . esc_attr($this->global_plugin_slug) . '. ';
-                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", 'restore-classic-widgets');
+                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", 'restore-classic-widgets');
+                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", "restore-classic-widgets");
                     ?>
                 </strong>
             </p>
@@ -583,22 +701,22 @@ class restore_classic_widgets_Bill_Diagnose
                 <div id="error-message" style="display:none;"></div> <!-- Mensagem de erro -->
                 <form id="chat-form">
                     <div id="input-group">
-                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', 'restore-classic-widgets'); ?>" />
-                        <button type="submit"><?php echo esc_attr__('Send', 'restore-classic-widgets'); ?></button>
+                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', "restore-classic-widgets"); ?>" />
+                        <button type="submit"><?php echo esc_attr__('Send', "restore-classic-widgets"); ?></button>
                     </div>
                     <div id="action-instruction" style="text-align: center; margin-top: 10px;">
-                        <span><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log ou server info configuration.", 'restore-classic-widgets'); ?></span>
+                        <span><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log ou server info configuration.", "restore-classic-widgets"); ?></span>
                     </div>
                     <div class="auto-checkup-container" style="text-align: center; margin-top: 10px;">
 
                         <button type="button" id="auto-checkup">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup for Errors', 'restore-classic-widgets'); ?>
+                            <?php echo esc_attr__('Auto Checkup for Errors', "restore-classic-widgets"); ?>
                         </button>
                         &nbsp;&nbsp;&nbsp;
                         <button type="button" id="auto-checkup2">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup Server ', 'restore-classic-widgets'); ?>
+                            <?php echo esc_attr__('Auto Checkup Server ', "restore-classic-widgets"); ?>
                         </button>
 
 
@@ -612,7 +730,7 @@ class restore_classic_widgets_Bill_Diagnose
 
             <h3 style="color: red;">
                 <?php
-                echo esc_attr__("Potential Problems", 'restore-classic-widgets');
+                echo esc_attr__("Potential Problems", "restore-classic-widgets");
                 ?>
             </h3>
 
@@ -622,12 +740,12 @@ class restore_classic_widgets_Bill_Diagnose
             <div id="accordion2">
                 <?php
                 $memory = $this->global_variable_memory;
-                $wpmemory = $memory;
-                if ($memory["free"] < 30 || $wpmemory["percent"] > 0.85) {
+                $restore_classic_widgets = $memory;
+                if ($memory["free"] < 30 || $restore_classic_widgets["percent"] > 0.85) {
                 ?>
                     <!-- Título da seção -->
                     <h2 style="color: red;">
-                        <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", 'restore-classic-widgets'); ?>
+                        <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", "restore-classic-widgets"); ?>
                     </h2>
 
                     <!-- Conteúdo da seção -->
@@ -635,28 +753,30 @@ class restore_classic_widgets_Bill_Diagnose
                         <b>
                             <?php
                             $mb = "MB";
-                            echo "WordPress Memory Limit: " . esc_attr($wpmemory["wp_limit"]) . esc_attr($mb) .
+                            echo '<br>';
+                            echo "WordPress Memory Limit: " . esc_attr($restore_classic_widgets["wp_limit"]) . esc_attr($mb) .
                                 "&nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;";
-                            $perc = $wpmemory["usage"] / $wpmemory["wp_limit"];
+                            echo '<br>';
+                            $perc = $restore_classic_widgets["usage"] / $restore_classic_widgets["wp_limit"];
                             if ($perc > 0.7) {
-                                echo '<span style="color:' . esc_attr($wpmemory["color"]) . ';">';
+                                echo '<span style="color:' . esc_attr($restore_classic_widgets["color"]) . ';">';
                             }
-                            echo esc_attr__("Your usage now", 'restore-classic-widgets') . ": " . esc_attr($wpmemory["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
+                            echo esc_attr__("Your usage now", "restore-classic-widgets") . ": " . esc_attr($restore_classic_widgets["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
                             if ($perc > 0.7) {
                                 echo "</span>";
                             }
-                            echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", 'restore-classic-widgets') . " : " . esc_attr($wpmemory["limit"]) . "MB";
+                            echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", "restore-classic-widgets") . " : " . esc_attr($restore_classic_widgets["limit"]) . "MB";
                             ?>
                         </b>
                         <hr>
                         <?php
-                        $free = $wpmemory["wp_limit"] - $wpmemory["usage"];
+                        $free = $restore_classic_widgets["wp_limit"] - $restore_classic_widgets["usage"];
                         echo '<p>';
-                        echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", 'restore-classic-widgets');
+                        echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", "restore-classic-widgets");
                         echo '</p>';
                         ?>
                         <a href="https://wpmemory.com/fix-low-memory-limit/">
-                            <?php echo esc_attr__("Learn More", 'restore-classic-widgets'); ?>
+                            <?php echo esc_attr__("Learn More", "restore-classic-widgets"); ?>
                         </a>
                     </div>
                 <?php } ?>
@@ -778,7 +898,7 @@ class restore_classic_widgets_Bill_Diagnose
                 echo '<strong>';
                 echo esc_html__("Suggestions:", "restore-classic-widgets") . '<br>';
                 echo '</strong>';
-                echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin StopBadBots.", "restore-classic-widgets") . '<br>';
+                echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin Antihacker.", "restore-classic-widgets") . '<br>';
                 echo esc_html__("Protect against hackers: They use bots to search for vulnerabilities and overload the server. Install our free plugin AntiHacker", "restore-classic-widgets") . '<br>';
 
                 echo esc_html__("Check your site for errors with free plugin wpTools. Errors and warnings can increase page load time by being recorded in log files, consuming resources and slowing down performance.", "restore-classic-widgets");
@@ -855,6 +975,7 @@ class restore_classic_widgets_Bill_Diagnose
 
                     // Exibe as informações do plugin
                     // echo '<div>';
+                    echo '<br>';
                     echo $plugin['Name'] . ': ' . $plugin['Version'] . ' (Update Available - ' . $update_version . ')' . $plugin_url;
                     echo '<br>';
 
@@ -881,61 +1002,33 @@ class restore_classic_widgets_Bill_Diagnose
             if ($this->global_variable_has_errors) { ?>
                 <h2 style="color: red;">
                     <?php
-                    echo esc_attr__("Site Errors", 'restore-classic-widgets');
+                    echo esc_attr__("Site Errors", "restore-classic-widgets");
                     ?>
                 </h2>
                 <p>
                     <?php
-                    echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", 'restore-classic-widgets');
+                    echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", "restore-classic-widgets");
                     ?>
                     <a href="https://wptoolsplugin.com/site-language-error-can-crash-your-site/">
                         <?php
-                        echo esc_attr__("Learn More", 'restore-classic-widgets');
+                        echo esc_attr__("Learn More", "restore-classic-widgets");
                         ?>
                     </a>
                 </p>
     <?php
                 $bill_count = 0;
-                $bill_folders = [];
-                $bill_themePath = get_theme_root();
-                $error_log_path = trim(ini_get("error_log"));
-                if (
-                    !is_null($error_log_path) and $error_log_path != trim(ABSPATH . "error_log")
-                ) {
-                    $bill_folders[] = $error_log_path;
-                }
-                $bill_folders[] = ABSPATH . "error_log";
-                $bill_folders[] = ABSPATH . "php_errorlog";
-                $bill_folders[] = plugin_dir_path(__FILE__) . "/error_log";
-                $bill_folders[] = plugin_dir_path(__FILE__) . "/php_errorlog";
-                $bill_folders[] = get_theme_root() . "/error_log";
-                $bill_folders[] = get_theme_root() . "/php_errorlog";
-                // Adicionar caminhos específicos de administração se existirem
-                $bill_admin_path = str_replace(
-                    get_bloginfo("url") . "/",
-                    ABSPATH,
-                    get_admin_url()
-                );
-                $bill_folders[] = $bill_admin_path . "/error_log";
-                $bill_folders[] = $bill_admin_path . "/php_errorlog";
-                // Adicionar diretórios de plugins
-                //$bill_plugins = array_slice(scandir(WPTOOLSPATH), 2);
-                $bill_plugins = array_slice(scandir(plugin_dir_path(__FILE__)), 2);
-                foreach ($bill_plugins as $bill_plugin) {
-                    if (is_dir(plugin_dir_path(__FILE__) . "/" . $bill_plugin)) {
-                        $bill_folders[] = plugin_dir_path(__FILE__) . "/" . $bill_plugin . "/error_log";
-                        $bill_folders[] = plugin_dir_path(__FILE__) . "/" . $bill_plugin . "/php_errorlog";
-                    }
-                }
-                $bill_themes = array_slice(scandir(get_theme_root()), 2);
-                foreach ($bill_themes as $bill_theme) {
-                    if (is_dir(get_theme_root() . "/" . $bill_theme)) {
-                        $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/error_log";
-                        $bill_folders[] = get_theme_root() . "/" . $bill_theme . "/php_errorlog";
-                    }
-                }
+
+
+
+
+                // Crie um objeto da classe ErrorChecker:
+                $errorChecker = new ErrorChecker();
+
+                // Chame o método get_path_logs() no objeto:
+                $bill_folders = $errorChecker->get_path_logs(); // Use -> (flecha)
+
                 echo "<br />";
-                echo esc_attr__("This is a partial list of the errors found.", 'restore-classic-widgets');
+                echo esc_attr__("This is a partial list of the errors found.", "restore-classic-widgets");
                 echo "<br />";
                 /**
                  * Obtém o tamanho do arquivo em bytes.
@@ -947,12 +1040,12 @@ class restore_classic_widgets_Bill_Diagnose
                 {
                     if (!file_exists($bill_filename) || !is_readable($bill_filename)) {
                         // return "File not readable.";
-                        return esc_attr__("File not readable.", 'restore-classic-widgets');
+                        return esc_attr__("File not readable.", "restore-classic-widgets");
                     }
                     $fileSizeBytes = filesize($bill_filename);
                     if ($fileSizeBytes === false) {
                         //return "Size not determined.";
-                        return esc_attr__("Size not determined.", 'restore-classic-widgets');
+                        return esc_attr__("Size not determined.", "restore-classic-widgets");
                     }
                     return $fileSizeBytes;
                 }
@@ -966,7 +1059,7 @@ class restore_classic_widgets_Bill_Diagnose
                 {
                     if (!is_int($sizeBytes) || $sizeBytes < 0) {
                         // Retorna uma mensagem de erro se o tamanho for inválido
-                        return esc_attr__("Invalid size.", 'restore-classic-widgets');
+                        return esc_attr__("Invalid size.", "restore-classic-widgets");
                     }
                     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
                     $unitIndex = 0;
@@ -979,6 +1072,13 @@ class restore_classic_widgets_Bill_Diagnose
                 }
                 // Comeca a mostrar erros...
                 //
+
+                // debug4($bill_folders);
+
+                // print_r($bill_folders);
+
+
+
                 foreach ($bill_folders as $bill_folder) {
                     $files = glob($bill_folder);
                     if ($files === false) {
@@ -990,7 +1090,7 @@ class restore_classic_widgets_Bill_Diagnose
                             echo "<strong>";
                             echo esc_attr($bill_filename);
                             echo "<br />";
-                            echo esc_attr__("File Size: ", 'restore-classic-widgets');
+                            echo esc_attr__("File Size: ", "restore-classic-widgets");
                             $fileSizeBytes = getFileSizeInBytes($bill_filename);
                             if (is_int($fileSizeBytes)) {
                                 echo esc_attr(convertToHumanReadableSize($fileSizeBytes));
@@ -1355,11 +1455,11 @@ class restore_classic_widgets_Bill_Diagnose
                 // Adicione uma guia de ajuda
                 $message = esc_attr__(
                     "These are critical issues that can have a significant impact on your site's performance. They can cause many plugins and functionalities to malfunction and, in some cases, render your site completely inoperative, depending on their severity. Address them promptly.",
-                    'restore-classic-widgets'
+                    "restore-classic-widgets"
                 );
                 $screen->add_help_tab([
                     "id"      => "custom-help-tab",
-                    "title"   => esc_attr__("Critical Issues", 'restore-classic-widgets'),
+                    "title"   => esc_attr__("Critical Issues", "restore-classic-widgets"),
                     "content" => "<p>" . $message . "</p>",
                 ]);
             }

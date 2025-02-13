@@ -53,7 +53,7 @@ if (file_exists($plugin_file_path)) {
 /*
     if (function_exists('is_plugin_active')){
         $bill_plugins_to_check = array(
-            'restore_classic_widgets/restore_classic_widgets.php',  
+            'wp_memory/wp_memory.php',  
         );
         foreach ($bill_plugins_to_check as $plugin_path) {
             if (is_plugin_active($plugin_path)) 
@@ -90,9 +90,10 @@ if (isset($wp_mu_plugins[$plugin_name])) {
 } else {
     //debug4();
 
-    //debug4('The Bill Catch Errors plugin is not installed or loaded.');
-    bill_install_mu_plugin();
-    return;
+    //debug4('The Bill Catch Errors plugin is not installed or loaded.')
+    // criou ?
+    if (bill_install_mu_plugin())
+        return;
 }
 
 function bill_install_mu_plugin()
@@ -101,16 +102,53 @@ function bill_install_mu_plugin()
 
     $plugin_file = 'bill-catch-errors.php';
     //'bill-catch-errors.php'; // Name of the plugin file to be copied
-    $restore_classic_widgets_mu_plugin_dir = WP_PLUGIN_DIR . '/restore-classic-widgets/includes/mu-plugins'; // Current path inside restore_classic_widgets
+    $restore_classic_widgets_mu_plugin_dir = WP_PLUGIN_DIR . '/wp-memory/includes/mu-plugins'; // Current path inside restore_classic_widgets
     $mu_plugins_dir = WPMU_PLUGIN_DIR; // MU-Plugins directory
 
+    $transient_name = 'unable_to_create_mu_folder';
+    $transient_check = get_transient($transient_name);
+
+    if ($transient_check !== false) {
+        return false;
+    }
+
+    /*
+
+  
+
+    $transient_name = 'unable_to_create_mu_folder';
+    $transient_value = true; // Ou qualquer valor que você queira armazenar no transiente
+    $expiration = 60 * 60 * 24 * 30; // 1 mês em segundos
+
+    set_transient($transient_name, $transient_value, $expiration);
+
+    // Para verificar se o transiente foi criado (opcional):
+    $transient_check = get_transient($transient_name);
+
+    if ($transient_check !== false) {
+        echo 'Transiente "' . $transient_name . '" criado com sucesso.';
+    } else {
+        echo 'Falha ao criar o transiente "' . $transient_name . '".';
+    }
+
+
+
+
+    */
 
     try {
         // Check if the MU-Plugins directory exists
         if (!is_dir($mu_plugins_dir)) {
             // Try to create the directory with the appropriate permissions
             if (!mkdir($mu_plugins_dir, 0755, true)) {
+
+                $transient_name = 'bill_unable_to_create_mu_folder';
+                $transient_value = true; // Ou qualquer valor que você queira armazenar no transiente
+                $expiration = 60 * 60 * 24 * 30; // 1 mês em segundos
+                set_transient($transient_name, $transient_value, $expiration);
+
                 error_log("Unable to create the MU-Plugins directory: " . $mu_plugins_dir);
+                return false;
             }
         }
 
@@ -202,7 +240,7 @@ function bill_minozzi_js_error_catched()
             }
             if ($log_error) {
 
-                if ($restore_classic_widgets_plugin_slug  == 'restore-classic-widgets')
+                if ($restore_classic_widgets_plugin_slug  == 'wp-memory')
                     restore_classic_widgetsErrorHandler('Javascript', $errorMessage, $errorURL, $errorLine);
 
                 if (error_log("\n" . $formattedMessage, 3, $logFile)) {
