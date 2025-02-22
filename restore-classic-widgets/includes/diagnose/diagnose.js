@@ -18,6 +18,11 @@ jQuery(document).ready(function ($) {
         active: false, // Começa com todas as seções recolhidas
         heightStyle: "content"
     });
+    $("#accordion4").accordion({
+        collapsible: true,
+        active: false, // Começa com todas as seções recolhidas
+        heightStyle: "content"
+    });
 
     // Adiciona os estilos personalizados
     $("<style>")
@@ -31,11 +36,20 @@ jQuery(document).ready(function ($) {
                     color: black !important;  /* Texto em vermelho */
                     border: 1px solid red;
                 }
+                #accordion4 .ui-accordion-header {
+                    background-color: #ffcccc; /* Vermelho claro */
+                    color: black !important;  /* Texto em vermelho */
+                    border: 1px solid red;
+                }
 
                 /* Fundo e cor do título quando o box estiver aberto */
                 #accordion1 .ui-accordion-header-active,
                 #accordion2 .ui-accordion-header-active,
                 #accordion3 .ui-accordion-header-active {
+                    background-color: #cc0000; /* Vermelho mais escuro */
+                    color: white !important; /* Texto em branco */
+                }
+                #accordion4 .ui-accordion-header-active {
                     background-color: #cc0000; /* Vermelho mais escuro */
                     color: white !important; /* Texto em branco */
                 }
