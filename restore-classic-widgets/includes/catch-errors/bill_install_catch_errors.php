@@ -192,7 +192,7 @@ function bill_install_mu_plugin()
 
         // Copy the plugin file to the MU-Plugins directory
 
-        if (!copy($source, $destination)) {
+        if (!@copy($source, $destination)) {
             // error_log("Unable to copy the plugin file to the MU-Plugins directory: " . $destination);
 
             $transient_name = 'bill_unable_to_create_mu_folder';
