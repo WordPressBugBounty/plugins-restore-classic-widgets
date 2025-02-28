@@ -7,6 +7,8 @@
 if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit();
 }
+Global $wpdb;
+
 $restore_classic_widgets_options = array(
     'bill_pre_checkup_finished',
     'bill_show_warnings'
@@ -42,4 +44,8 @@ if (isset($wp_mu_plugins[$plugin_name])) {
         // error_log("Successfully removed the plugin file: $destination");
     }
 }
+
+$table = $wpdb->prefix . 'bill_catch_some_bots';
+$wpdb->query("DROP TABLE IF EXISTS $table");
+
 ?>

@@ -29,7 +29,7 @@ function restore_classic_widgets_sysinfo_get()
     if ($host === false) {
         $host = restore_classic_widgets_get_host();
     }
-    $return  = '=== Begin System Info v 2.0 (Generated ' . date('Y-m-d H:i:s') . ') ===' . "\n\n";
+    $return  = '=== Begin System Info v 2.1a (Generated ' . date('Y-m-d H:i:s') . ') ===' . "\n\n";
     $file_path_from_plugin_root = str_replace(WP_PLUGIN_DIR . '/', '', __DIR__);
     $path_array = explode('/', $file_path_from_plugin_root);
     // Plugin folder is the first element
@@ -62,7 +62,7 @@ function restore_classic_widgets_sysinfo_get()
     $return .= 'ABSPATH:                  ' . ABSPATH . "\n";
     $return .= 'Plugin Dir:                  ' . RESTORECLASSICPATH . "\n";
     $return .= 'Table Prefix:             ' . 'Length: ' . strlen($wpdb->prefix) . '   Status: ' . (strlen($wpdb->prefix) > 16 ? 'ERROR: Too long' : 'Acceptable') . "\n";
-    //$return .= 'Admin AJAX:               ' . ( restore_classic_widgets_test_ajax_works() ? 'Accessible' : 'Inaccessible' ) . "\n";
+    //$return .= 'Admin AJAX:               ' . ( wp_memory_test_ajax_works() ? 'Accessible' : 'Inaccessible' ) . "\n";
 
     if (defined('WP_DEBUG')) {
         $return .= 'WP_DEBUG:                 ' . (WP_DEBUG ? 'Enabled' : 'Disabled');
@@ -102,7 +102,23 @@ function restore_classic_widgets_sysinfo_get()
     if ($errorLogPath) {
 
         $return .= "Error Log is defined in PHP: " . $errorLogPath . "\n";
-        $return .= file_exists($errorLogPath) ? " (exists)\n" : " (does not exist)\n";
+        // $return .= file_exists($errorLogPath) ? " (exists)\n" : " (does not exist)\n";
+
+        try {
+            if (file_exists($errorLogPath)) {
+                $return .= " (exists)\n"; // Correção: adicionado parêntese de fechamento e removido operador ternário desnecessário
+                $return .= 'Size:                     ' . size_format(filesize($errorLogPath)) . "\n"; // Correção: removido ponto extra e adicionado parêntese de fechamento em filesize()
+                $return .= 'Readable:                 ' . (is_readable($errorLogPath) ? 'Yes' : 'No') . "\n"; // Correção: adicionado parêntese de fechamento em is_readable()
+                $return .= 'Writable:                 ' . (is_writable($errorLogPath) ? 'Yes' : 'No') . "\n"; // Correção: adicionado parêntese de fechamento em is_writable()
+            } else {
+                $return .= " (does not exist)\n"; // Adicionado mensagem para indicar que o arquivo não existe
+                $return .= 'Size:                     N/A' . "\n";
+                $return .= 'Readable:                 N/A' . "\n";
+                $return .= 'Writable:                 N/A' . "\n";
+            }
+        } catch (Exception $e) {
+            $return .= 'Error checking error log path: ' . $e->getMessage() . "\n";
+        }
     } else {
 
         $return .= "Error log not defined on PHP file ini\n";
@@ -171,11 +187,11 @@ function restore_classic_widgets_sysinfo_get()
 
     try {
         if (file_exists($error_log_path)) { // Check if the file exists before attempting to access its size, readability, or writability. This prevents warnings or errors if the file doesn't exist.
-            $return .= 'Size:                     ' . size_format(filesize($error_log_path)) . "\n"; // Use filesize() for file size and size_format() for human-readable format.  file_size() doesn't exist in PHP.
+            $return .= 'Size:                         ' . size_format(filesize($error_log_path)) . "\n"; // Use filesize() for file size and size_format() for human-readable format.  file_size() doesn't exist in PHP.
             $return .= 'Readable:                     ' . (is_readable($error_log_path) ? 'Yes' : 'No') . "\n";  // Use is_readable() instead of file_readable(). More common and accurate.
             $return .= 'Writable:                     ' . (is_writable($error_log_path) ? 'Yes' : 'No') . "\n"; // Use is_writable() instead of file_writable(). More common and accurate.
         } else {
-            $return .= 'Size:                     N/A' . "\n";
+            $return .= 'Size:                         N/A' . "\n";
             $return .= 'Readable:                     N/A' . "\n";
             $return .= 'Writable:                     N/A' . "\n";
         }
@@ -399,7 +415,7 @@ function restore_classic_widgets_sysinfo_get()
 
 
     try {
-        $return .= 'Error Reporting:          ' . restore_classic_widgetes_readable_error_reporting(error_reporting()) . "\n";
+        $return .= 'Error Reporting:          ' . wpmemory_readable_error_reporting(error_reporting()) . "\n";
     } catch (Exception $e) {
 
         $return .= 'Error Reporting: Fail to get  error_reporting(): ' . $e . '\n';
@@ -429,13 +445,14 @@ function restore_classic_widgets_sysinfo_get()
     $return .= 'SOAP Client:              ' . (class_exists('SoapClient') ? 'Installed' : 'Not Installed') . "\n";
     $return .= 'Suhosin:                  ' . (extension_loaded('suhosin') ? 'Installed' : 'Not Installed') . "\n";
     $return .= 'SplFileObject:            ' . (class_exists('SplFileObject') ? 'Installed' : 'Not Installed') . "\n";
+    $return .= 'Imageclick:               ' . (extension_loaded('imagick') ? 'Installed' : 'Not Installed') . "\n";
 
-    $return .= "\n" . '=== End System Info v 2.0  ===';
+    $return .= "\n" . '=== End System Info v 2.1a  ===';
     return $return;
 }
 
 
-function restore_classic_widgetes_readable_error_reporting($level)
+function wpmemory_readable_error_reporting($level)
 {
     $error_levels = [
         E_ALL => 'E_ALL',

@@ -1,6 +1,6 @@
 <?php
 
-namespace wpmemory_BillDiagnose;
+namespace restore_classic_widgetsBillDiagnose;
 // 2023-08 upd: 2023-10-17 2024-06=21 2024-31-12 2025-02-11
 if (!defined('ABSPATH')) {
     die('Invalid request.');
@@ -9,7 +9,8 @@ if (function_exists('is_multisite') and is_multisite()) {
     return;
 }
 
-// debug4();
+
+
 
 /*
 // >>>>>>>>>>>>>>>> call
@@ -52,6 +53,9 @@ if (function_exists('is_plugin_active')) {
         }
     }
 }
+
+/*
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 $logErrors = ini_get('log_errors');
 $errorLog = ini_get('error_log');
 if ($logErrors) {
@@ -61,6 +65,7 @@ if ($logErrors) {
 } else {
     ini_set('log_errors', 'On');
 }
+    */
 // -- Help
 // Função para exibir o ID da tela
 function debug_screen_id_current_screen($screen)
@@ -80,13 +85,13 @@ function add_help_tab_to_screen()
         $hmessage = esc_attr__(
             'Here are some details about error and memory monitoring for your plugin. Errors and low memory can prevent your site from functioning properly. On this page, you will find a partial list of the most recent errors and warnings. If you need more details, use the chat form, which will search for additional information using Artificial Intelligence.  
 If you need to dive deeper, install the free plugin WPTools, which provides more in-depth insights.',
-            "wp-memory"
+            "restore-classic-widgets"
         );
         // Adiciona a aba de ajuda
         $screen->add_help_tab([
             'id'      => 'site-health', // ID único para a aba
-            'title'   => esc_attr__('Memory & Error Monitoring', "wp-memory"), // Título da aba
-            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', "wp-memory") . '</p>
+            'title'   => esc_attr__('Memory & Error Monitoring', "restore-classic-widgets"), // Título da aba
+            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', "restore-classic-widgets") . '</p>
                           <p>' . $hmessage . '</p>',
         ]);
     }
@@ -106,7 +111,10 @@ class ErrorChecker
     {
         return preg_replace('/[[:^print:]]/', '', $string);
     }
-    public function bill_parseDate($dateString, $locale)
+
+
+
+    public function bill_parseDate_old_mexida($dateString, $locale)
     {
 
 
@@ -153,7 +161,17 @@ class ErrorChecker
             'd.m.Y', // 31.12.2024 (Alemão)
             'd-m-Y', // 31-12-2024 (Holandês)
         ];
+        // debug4($locale);
         foreach ($possibleFormats as $format) {
+
+            $timestamp = strtotime($dateString);
+
+            if ($timestamp !== false) {
+
+                return true;
+            }
+
+            /*
             $date = \DateTime::createFromFormat($format, $dateString);
             // debug4($date);
             // debug4($format);
@@ -161,11 +179,64 @@ class ErrorChecker
                 // debug4($date);
                 return $date;
             }
+            */
         }
         // Se nenhum formato funcionar, lança uma exceção
         // throw new \Exception("Falha ao parsear a data: " . $dateString);
+        // debug4('Falhou !!!');
         return false;
     }
+
+
+
+
+    /* Transform data em objeto DateTime */
+    // \DateTime::__set_state(array( 'date' => '2025-02-23 17:51:41.920019', 'timezone_type' => 3, 'timezone' => 'UTC', ))
+
+    public function bill_parseDate($dateString, $locale)
+    {
+        if (isset($dateString) && !empty($dateString)) {
+            $dateString = trim($dateString);
+            $dateString = ErrorChecker::limparString($dateString);
+        } else {
+            // debug4("Data vazia ou inválida");
+            return false;
+        }
+
+        // Formatos possíveis em inglês
+        $possibleFormats = [
+            'd/m/Y',    // 31/12/2024
+            'm/d/Y',    // 12/31/2024
+            'Y-m-d',    // 2024-12-31
+            'd-M-Y',    // 31-Dec-2024
+            'd F Y',    // 31 December 2024
+            'd.m.Y',    // 31.12.2024
+            'd-m-Y',    // 31-12-2024
+        ];
+
+        foreach ($possibleFormats as $format) {
+            $date = \DateTime::createFromFormat($format, $dateString);
+            // debug4("Testando formato: $format");
+            if ($date !== false) {
+                // debug4("Data reconhecida: " . $date->format('Y-m-d'));
+                return $date;
+            }
+        }
+
+        // Fallback com strtotime para formatos em inglês não listados
+        $timestamp = strtotime($dateString);
+        if ($timestamp !== false) {
+            $date = new DateTime();
+            $date->setTimestamp($timestamp);
+            // debug4("Data reconhecida via strtotime: " . $date->format('Y-m-d'));
+            return $date;
+        }
+
+        // debug4("Falhou ao parsear a data: $dateString");
+        return false;
+    }
+
+
     public function enqueue_diagnose_scripts()
     {
         wp_enqueue_script('jquery-ui-accordion'); // Enfileira o jQuery UI Accordion
@@ -193,28 +264,21 @@ class ErrorChecker
     public static function get_path_logs()
     {
         $bill_folders = [];
-        $caminho_padrao = realpath(ABSPATH . "error_log");
-        $bill_folders[] = $caminho_padrao;
-        $bill_folders[] = realpath(ABSPATH . "php_errorlog");
 
-
-        /*
-        // PHP error log (defined in php.ini)
-        $error_log_path = trim(ini_get("error_log"));
-        if (!is_null($error_log_path) && $error_log_path != trim(ABSPATH . "error_log")) {
-            $bill_folders[] = $error_log_path;
+        $error_log_path = ini_get("error_log");
+        if (!empty($error_log_path)) {
+            $error_log_path = trim($error_log_path);
+        } else {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                $error_log_path = trailingslashit(WP_CONTENT_DIR) . 'debug.log';
+            } else {
+                $error_log_path = trailingslashit(ABSPATH) . 'error_log';
+            }
         }
-        */
 
+        $bill_folders[] = $error_log_path;
 
-        // Opção 2 (mais robusta): Adiciona se estiver definido e for diferente do padrão
-        $error_log_path = trim(ini_get("error_log"));
-        $caminho_padrao = realpath(ABSPATH . "error_log");
-        $caminho_atual = realpath($error_log_path);
-
-        if (!empty($error_log_path) && $caminho_atual != $caminho_padrao && !in_array($error_log_path, $bill_folders)) {
-            $bill_folders[] = $error_log_path;
-        }
+        //debug2($bill_folders);
 
 
 
@@ -290,7 +354,12 @@ class ErrorChecker
 
 
 
+        // debug2($bill_folders);
 
+        //var_dump($bill_folders);
+
+
+        //die();
 
 
         return $bill_folders;
@@ -309,12 +378,22 @@ class ErrorChecker
 
         $bill_count = 0;
 
+        // // debug4();
+
+        //
+        //
+        ///
+        //
+        //
+        //
 
 
 
 
         // $bill_folders = get_path_logs();
         $bill_folders = ErrorChecker::get_path_logs();
+
+        // var_dump($bill_folders);
 
 
 
@@ -341,12 +420,12 @@ class ErrorChecker
         $language = substr($locale, 0, 2); // Extrai o código de idioma (ex: 'pt', 'en')
         // Itera sobre as pastas 
 
-        //debug4($bill_folders);
+        //// debug4($bill_folders);
 
         foreach ($bill_folders as $bill_folder) {
             if (!empty($bill_folder) && file_exists($bill_folder) && filesize($bill_folder) > 0) {
 
-                //debug4($bill_folder);
+                // debug4($bill_folder);
 
                 $bill_count++;
                 $marray = $this->bill_read_file($bill_folder, 20);
@@ -354,12 +433,15 @@ class ErrorChecker
                     // debug4($marray);
                     foreach ($marray as $line) {
                         if (empty($line)) {
+                            // // debug4();
                             continue;
                         }
                         if ($filter !== null && stripos($line, $filter) === false) {
+                            // // debug4();
                             continue;
                         }
                         if (substr($line, 0, 1) !== '[') {
+                            // // debug4();
                             continue;
                         }
                         // Verifica se a linha corresponde a algum padrão de data
@@ -373,19 +455,28 @@ class ErrorChecker
 
                                     $date = $this->bill_parseDate($matches[0], $locale);
 
+                                    //die(var_export($date));
+                                    // \DateTime::__set_state(array( 'date' => '2025-02-26 17:48:55.000000', 'timezone_type' => 3, 'timezone' => 'UTC', ))
+
+
+                                    // die(var_export($dateThreshold));
+                                    // \DateTime::__set_state(array( 'date' => '2025-02-23 17:51:41.920019', 'timezone_type' => 3, 'timezone' => 'UTC', ))
+
                                     // debug4($date);
 
                                     if (!$date) {
+                                        // // debug4();
                                         continue;
                                     }
 
                                     if (!$date instanceof \DateTime) {
+                                        // // debug4();
                                         continue;
                                     }
 
                                     // Verifica se a data é anterior ao limite
-                                    // debug4($date);
-                                    // debug4($dateThreshold);
+                                    // // debug4($date);
+                                    // // debug4($dateThreshold);
                                     if ($date < $dateThreshold) {
                                         // debug2('Antiga');
                                         // debug4("Data antiga encontrada: " . $date->format('Y-m-d'));
@@ -399,36 +490,102 @@ class ErrorChecker
                                     continue;
                                 }
                             } else {
-                                // debug4('nao bateu');
+                                // // debug4('nao bateu');
                             }
                         }
+                        // debug4('False ??');
                         return false;
                     }
                 }
             }
         }
+        // debug4('False ??????????????');
         return false;
     }
 
+
+
+
+
+
+
+
     public function bill_read_file($file, $lines)
     {
+        // Check if the file exists and is readable
+        //debug2($file);
+        //debug2($lines);
+
+        clearstatcache(true, $file); // Clear cache to ensure current file state
+        if (!file_exists($file) || !is_readable($file)) {
+            return []; // Return empty array in case of error
+        }
+
+        $text = [];
+
+        // Check if SplFileObject is available
+        /*
+        if (class_exists('SplFileObject')) {
+            try {
+                // Open the file with SplFileObject (using global namespace)
+                $fileObj = new \SplFileObject($file, 'r');
+                debug2("SplFileObject aberto para: $file");
+
+                // Move to the end to count total lines
+                $fileObj->seek(PHP_INT_MAX);
+                $totalLines = $fileObj->key(); // Total number of lines (zero-based index)
+                debug2("Total de linhas detectadas: $totalLines");
+
+                // Calculate the starting line for the last $lines
+                $startLine = max(0, $totalLines - $lines);
+                debug2("Linha inicial calculada: $startLine (para $lines linhas)");
+
+                // Move the pointer to the starting line
+                $fileObj->seek($startLine);
+                debug2("Ponteiro movido para linha: " . $fileObj->key());
+
+                // Read lines until the end
+                while (!$fileObj->eof() && count($text) < $lines) {
+                    $line = $fileObj->fgets();
+                    if ($line === false && file_exists($file)) {
+                        debug2("Falha ao ler linha na posição " . $fileObj->key() . ", tentando novamente...");
+                        usleep(500000); // Wait 0.5 seconds if reading fails
+                        $line = $fileObj->fgets(); // Retry reading the line
+                    }
+                    if ($line !== false) {
+                        $text[] = rtrim($line); // Remove trailing newlines
+                        // debug2("Linha lida: " . rtrim($line));
+                    } else {
+                        debug2("Nenhuma linha lida na posição " . $fileObj->key() . ", EOF ou erro");
+                        break;
+                    }
+                }
+                debug2("Linhas lidas com SplFileObject: " . count($text));
+            } catch (\Exception $e) {
+                // In case of error, return empty array and log the issue
+                debug2("Exceção capturada ao usar SplFileObject: " . $e->getMessage());
+                error_log("Error reading $file with SplFileObject: " . $e->getMessage());
+                return [];
+            }
+        } else {
+         */
+        // Fallback to original method with fopen
         $handle = fopen($file, "r");
         if (!$handle) {
-            return "";
+            return [];
         }
-        $bufferSize = 8192; // Tamanho do bloco de leitura (8KB)
-        $text = [];
+
+        $bufferSize = 8192; // 8KB
         $currentChunk = '';
         $linecounter = 0;
-        // Move para o final do arquivo e começa a leitura para trás
         fseek($handle, 0, SEEK_END);
-        $filesize = ftell($handle); // Tamanho do arquivo
-        // Ajustar bufferSize para o tamanho do arquivo se for menor que 8KB
+        $filesize = ftell($handle);
         if ($filesize < $bufferSize) {
             $bufferSize = $filesize;
         }
         if ($bufferSize < 1) {
-            return '';
+            fclose($handle);
+            return [];
         }
         $pos = $filesize - $bufferSize;
         while ($pos >= 0 && $linecounter < $lines) {
@@ -437,6 +594,10 @@ class ErrorChecker
             }
             fseek($handle, $pos);
             $chunk = fread($handle, $bufferSize);
+            if ($chunk === false && file_exists($file)) {
+                usleep(500000); // Wait 0.5 seconds if reading fails
+                $chunk = fread($handle, $bufferSize); // Retry reading the chunk
+            }
             $currentChunk = $chunk . $currentChunk;
             $linesInChunk = explode("\n", $currentChunk);
             $currentChunk = array_shift($linesInChunk);
@@ -453,6 +614,10 @@ class ErrorChecker
             $text[] = $currentChunk;
         }
         fclose($handle);
+        // }
+
+        //debug2($text);
+
         return $text;
     }
 } // end class error checker
@@ -525,7 +690,7 @@ class MemoryChecker
         return $wpmemory;
     }
 }
-class wpmemory_Bill_Diagnose
+class restore_classic_widgetsBill_Diagnose
 {
     protected $global_plugin_slug;
     private static $instance = null;
@@ -533,6 +698,7 @@ class wpmemory_Bill_Diagnose
     private $notification_url2;
     private $global_variable_has_errors;
     private $global_variable_memory;
+    protected $wpdb; // Declarar a propriedade aqui
     public function __construct(
         $notification_url,
         $notification_url2
@@ -548,9 +714,13 @@ class wpmemory_Bill_Diagnose
         //
         $this->global_variable_has_errors  = $errorChecker->bill_check_errors_today(3);
 
+        //var_dump($this->global_variable_has_errors);
+        //die();
 
 
-        //debug4($this->global_variable_has_errors);
+
+
+        //// debug4($this->global_variable_has_errors);
 
 
         // NOT same class
@@ -561,10 +731,18 @@ class wpmemory_Bill_Diagnose
         //add_action("admin_notices", [$this, "show_dismissible_notification"]);
         //add_action("admin_notices", [$this, "show_dismissible_notification2"]);
         // 2024
-        // debug4($this->global_variable_has_errors);
+        // // debug4($this->global_variable_has_errors);
+        //var_dump($this->global_variable_has_errors);
+        //die(var_export(__LINE__));
+
+
+
         if ($this->global_variable_has_errors) {
             add_action("admin_bar_menu", [$this, "add_site_health_link_to_admin_toolbar"], 999);
             // debug2('global_variable_has_errors');
+
+            //var_dump($this->global_variable_has_errors);
+            //die(var_export(__LINE__));
         }
         add_action("admin_head", [$this, "custom_help_tab"]);
         $memory = $this->global_variable_memory;
@@ -652,15 +830,15 @@ class wpmemory_Bill_Diagnose
         if ($memory["free"] > 30 and $wpmemory["percent"] < 0.85) {
             return;
         }
-        $message = esc_attr__("Our plugin", "wp-memory");
+        $message = esc_attr__("Our plugin", "restore-classic-widgets");
         $message .= ' (' . $this->plugin_slug . ') ';
-        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", "wp-memory");
+        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", "restore-classic-widgets");
         $message .=
             '<a href="' .
             esc_url($this->notification_url) .
             '">' .
             " " .
-            esc_attr__("Learn more", "wp-memory") .
+            esc_attr__("Learn more", "restore-classic-widgets") .
             "</a>";
         echo '<div class="notice notice-error is-dismissible">';
         echo '<p style="color: red;">' . wp_kses_post($message) . "</p>";
@@ -669,7 +847,7 @@ class wpmemory_Bill_Diagnose
     // Helper function to check if a notification has been displayed today
     public function is_notification_displayed_today()
     {
-        $last_notification_date = get_option("wpmemory_bill_show_warnings");
+        $last_notification_date = get_option("restore_classic_widgetsbill_show_warnings");
         $today = date("Y-m-d");
         return $last_notification_date === $today;
     }
@@ -680,7 +858,7 @@ class wpmemory_Bill_Diagnose
         $tabs["Critical Issues"] = esc_html_x(
             "Critical Issues",
             "Site Health",
-            "wp-memory"
+            "restore-classic-widgets"
         );
         return $tabs;
     }
@@ -690,8 +868,8 @@ class wpmemory_Bill_Diagnose
 
         global $wpdb;
 
-        if (!function_exists('wpmemory_bill_strip_strong99')) {
-            function wpmemory_bill_strip_strong99($htmlString)
+        if (!function_exists('restore_classic_widgetsbill_strip_strong99')) {
+            function restore_classic_widgetsbill_strip_strong99($htmlString)
             {
                 // return $htmlString;
                 // Use preg_replace para remover as tags <strong>
@@ -711,18 +889,18 @@ class wpmemory_Bill_Diagnose
             <p style="border: 1px solid red; padding: 10px;">
                 <strong>
                     <?php
-                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", "wp-memory");
+                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", "restore-classic-widgets");
                     echo ': ' . esc_attr($this->global_plugin_slug) . '. ';
-                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", "wp-memory");
+                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", "wp-memory");
+                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", "restore-classic-widgets");
                     ?>
                 </strong>
             </p>
             <!-- chat -->
             <div id="chat-box">
                 <div id="chat-header">
-                    <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "wp-memory"); ?></h2>
+                    <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "restore-classic-widgets"); ?></h2>
                 </div>
                 <div id="gif-container">
                     <div class="spinner999"></div>
@@ -731,22 +909,22 @@ class wpmemory_Bill_Diagnose
                 <div id="error-message" style="display:none;"></div> <!-- Mensagem de erro -->
                 <form id="chat-form">
                     <div id="input-group">
-                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', "wp-memory"); ?>" />
-                        <button type="submit"><?php echo esc_attr__('Send', "wp-memory"); ?></button>
+                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', "restore-classic-widgets"); ?>" />
+                        <button type="submit"><?php echo esc_attr__('Send', "restore-classic-widgets"); ?></button>
                     </div>
                     <div id="action-instruction" style="text-align: center; margin-top: 10px;">
-                        <span><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log ou server info configuration.", "wp-memory"); ?></span>
+                        <span><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log ou server info configuration.", "restore-classic-widgets"); ?></span>
                     </div>
                     <div class="auto-checkup-container" style="text-align: center; margin-top: 10px;">
 
                         <button type="button" id="auto-checkup">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup for Errors', "wp-memory"); ?>
+                            <?php echo esc_attr__('Auto Checkup for Errors', "restore-classic-widgets"); ?>
                         </button>
                         &nbsp;&nbsp;&nbsp;
                         <button type="button" id="auto-checkup2">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup Server ', "wp-memory"); ?>
+                            <?php echo esc_attr__('Auto Checkup Server ', "restore-classic-widgets"); ?>
                         </button>
 
 
@@ -760,7 +938,7 @@ class wpmemory_Bill_Diagnose
 
             <h3 style="color: red;">
                 <?php
-                echo esc_attr__("Potential Problems", "wp-memory");
+                echo esc_attr__("Potential Problems", "restore-classic-widgets");
                 ?>
             </h3>
 
@@ -789,7 +967,7 @@ class wpmemory_Bill_Diagnose
                     ?>
                             <!-- Título da seção -->
                             <h2 style="color: red;">
-                                <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", "wp-memory"); ?>
+                                <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", "restore-classic-widgets"); ?>
                             </h2>
                             <!-- Conteúdo da seção -->
                             <div>
@@ -802,11 +980,11 @@ class wpmemory_Bill_Diagnose
                                     if ($wpmemory["percent"] > 0.7) {
                                         echo '<span style="color:' . esc_attr($wpmemory["color"]) . ';">';
                                     }
-                                    echo esc_attr__("Your usage now", "wp-memory") . ": " . esc_attr($wpmemory["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
+                                    echo esc_attr__("Your usage now", "restore-classic-widgets") . ": " . esc_attr($wpmemory["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
                                     if ($wpmemory["percent"] > 0.7) {
                                         echo "</span>";
                                     }
-                                    echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", "wp-memory") . " : " . esc_attr($wpmemory["limit"]) . "MB";
+                                    echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", "restore-classic-widgets") . " : " . esc_attr($wpmemory["limit"]) . "MB";
                                     ?>
                                 </b>
                                 <hr>
@@ -814,11 +992,11 @@ class wpmemory_Bill_Diagnose
                                 //$free = $wpmemory["wp_limit"] - $wpmemory["usage"];
                                 echo '<p>';
                                 echo '<br>';
-                                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", "wp-memory");
+                                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", "restore-classic-widgets");
                                 echo '</p>';
                                 ?>
                                 <a href="https://wpmemory.com/fix-low-memory-limit/">
-                                    <?php echo esc_attr__("Learn More", "wp-memory"); ?>
+                                    <?php echo esc_attr__("Learn More", "restore-classic-widgets"); ?>
                                 </a>
                             </div>
                     <?php }
@@ -912,9 +1090,9 @@ class wpmemory_Bill_Diagnose
 
                     // Determina a mensagem com base na média
                     if ($average <= 8) {
-                        $message = esc_html__("The page load time is poor (click to open)", "wp-memory");
+                        $message = esc_html__("The page load time is poor (click to open)", "restore-classic-widgets");
                     } else {
-                        $message = esc_html__("The page load time is very poor (click to open)", "wp-memory");
+                        $message = esc_html__("The page load time is very poor (click to open)", "restore-classic-widgets");
                     }
 
                     echo $message; // Exibe a mensagem diretamente
@@ -925,29 +1103,29 @@ class wpmemory_Bill_Diagnose
 
                     //  if ($average > 5) {
                     // Exibe as informações quando a média for maior que 5
-                    echo esc_html__("The Load average of your front pages is: ", "wp-memory");
+                    echo esc_html__("The Load average of your front pages is: ", "restore-classic-widgets");
                     echo esc_html($average);
                     echo '<br>';
-                    echo esc_html__("Loading time can significantly impact your SEO.", "wp-memory");
+                    echo esc_html__("Loading time can significantly impact your SEO.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_html__("Many users will abandon the site before it fully loads.", "wp-memory");
+                    echo esc_html__("Many users will abandon the site before it fully loads.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_html__("Search engines prioritize faster-loading pages, as they improve user experience and reduce bounce rates.", "wp-memory");
+                    echo esc_html__("Search engines prioritize faster-loading pages, as they improve user experience and reduce bounce rates.", "restore-classic-widgets");
                     //}
                     echo '<br>';
                     echo '<br>';
                     echo '<strong>';
-                    echo esc_html__("Suggestions:", "wp-memory") . '<br>';
+                    echo esc_html__("Suggestions:", "restore-classic-widgets") . '<br>';
                     echo '</strong>';
-                    echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin Antihacker.", "wp-memory") . '<br>';
-                    echo esc_html__("Protect against hackers: They use bots to search for vulnerabilities and overload the server. Install our free plugin AntiHacker", "wp-memory") . '<br>';
+                    echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin Antihacker.", "restore-classic-widgets") . '<br>';
+                    echo esc_html__("Protect against hackers: They use bots to search for vulnerabilities and overload the server. Install our free plugin AntiHacker", "restore-classic-widgets") . '<br>';
 
-                    echo esc_html__("Check your site for errors with free plugin wpTools. Errors and warnings can increase page load time by being recorded in log files, consuming resources and slowing down performance.", "wp-memory");
+                    echo esc_html__("Check your site for errors with free plugin wpTools. Errors and warnings can increase page load time by being recorded in log files, consuming resources and slowing down performance.", "restore-classic-widgets");
                     echo '<br>';
 
                     echo '<br>';
                     echo '<a href="https://wptoolsplugin.com/page-load-times-and-their-negative-impact-on-seo/">';
-                    echo esc_html__("Learn more about Page Load Times and their negative impact on SEO and more", "wp-memory") . "...";
+                    echo esc_html__("Learn more about Page Load Times and their negative impact on SEO and more", "restore-classic-widgets") . "...";
                     echo "</a>";
 
                     // echo '<hr>';
@@ -989,14 +1167,14 @@ class wpmemory_Bill_Diagnose
                     echo '<div id="accordion3">';
                     //echo '<hr>';
                     echo '<h2 style="color: red;">';
-                    echo esc_attr__('Plugins with Updates Available (click to open)', 'wp-memory');
+                    echo esc_attr__('Plugins with Updates Available (click to open)', 'restore-classic-widgets');
                     echo '</h2>';
                     echo '<div>';
 
-                    esc_attr_e("Keeping your plugins up to date is crucial for ensuring security, performance, and compatibility with the latest features and improvements.", "wp-memory");
+                    esc_attr_e("Keeping your plugins up to date is crucial for ensuring security, performance, and compatibility with the latest features and improvements.", "restore-classic-widgets");
                     echo '<br>';
                     echo '<strong>';
-                    esc_attr_e("Our free AntiHacker plugin can even check for abandoned plugins that you are using, as these plugins may no longer receive security updates, leaving your site vulnerable to attacks and potential exploits, which can compromise your site's integrity and data.", "wp-memory");
+                    esc_attr_e("Our free AntiHacker plugin can even check for abandoned plugins that you are using, as these plugins may no longer receive security updates, leaving your site vulnerable to attacks and potential exploits, which can compromise your site's integrity and data.", "restore-classic-widgets");
 
 
                     echo '<br>';
@@ -1107,17 +1285,17 @@ class wpmemory_Bill_Diagnose
                         function format_time_difference2($seconds)
                         {
                             if ($seconds < 60) {
-                                return "$seconds" . " " . esc_attr__("seconds", 'wp-memory');
+                                return "$seconds" . " " . esc_attr__("seconds", 'restore-classic-widgets');
                             } elseif ($seconds < 3600) {
-                                return round($seconds / 60) . " " . esc_attr__("minutes", 'wp-memory');
+                                return round($seconds / 60) . " " . esc_attr__("minutes", 'restore-classic-widgets');
                             } elseif ($seconds < 86400) {
-                                return round($seconds / 3600) . " " . esc_attr__("hour(s)", 'wp-memory');
+                                return round($seconds / 3600) . " " . esc_attr__("hour(s)", 'restore-classic-widgets');
                             } elseif ($seconds < 604800) {
-                                return round($seconds / 86400) . " " . esc_attr__("day(s)", 'wp-memory');
+                                return round($seconds / 86400) . " " . esc_attr__("day(s)", 'restore-classic-widgets');
                             } elseif ($seconds < 2592000) {
-                                return round($seconds / 604800) . " " . esc_attr__("week(s)", 'wp-memory');
+                                return round($seconds / 604800) . " " . esc_attr__("week(s)", 'restore-classic-widgets');
                             } else {
-                                return round($seconds / 2592000) . " " . esc_attr__("month(s)", 'wp-memory');
+                                return round($seconds / 2592000) . " " . esc_attr__("month(s)", 'restore-classic-widgets');
                             }
                         }
                         function format_time_difference($seconds)
@@ -1164,28 +1342,28 @@ class wpmemory_Bill_Diagnose
                         echo '<br>';
                         echo '<div id="accordion4">';
                         echo '<h2 style="color: red;">';
-                        echo esc_attr__('Bots and Hackers Attack (click to open)', 'wp-memory');
+                        echo esc_attr__('Bots and Hackers Attack (click to open)', 'restore-classic-widgets');
                         echo '</h2>';
                         echo '<div>';
-                        echo esc_attr__('Number of last attacks: ', 'wp-memory') . $num_attacks;
+                        echo esc_attr__('Number of last attacks: ', 'restore-classic-widgets') . $num_attacks;
                         echo ' in ';
                         echo format_time_difference($diferenca_segundos);
                         echo '<br>';
                         //echo $diferenca_segundos;
                         echo '<br>';
                         //echo '</strong>';
-                        esc_attr_e("Bots aren’t human—they’re automated scripts that visit your site. They steal your content, making it less unique. They overload your server, slowing it down and hurting your SEO.", "wp-memory");
+                        esc_attr_e("Bots aren’t human—they’re automated scripts that visit your site. They steal your content, making it less unique. They overload your server, slowing it down and hurting your SEO.", "restore-classic-widgets");
                         echo '<br>';
-                        esc_attr_e("Hackers look for vulnerabilities to access your server. Even small sites are targets—they use your server to send spam and attack others, damaging your IP and email reputation.", "wp-memory");
+                        esc_attr_e("Hackers look for vulnerabilities to access your server. Even small sites are targets—they use your server to send spam and attack others, damaging your IP and email reputation.", "restore-classic-widgets");
                         echo '<br>';
-                        esc_attr_e("If you doubt the accuracy of the table below, check with your hosting provider or check the IPs with the site https://ipinfo.io.", "wp-memory");
+                        esc_attr_e("If you doubt the accuracy of the table below, check with your hosting provider or check the IPs with the site https://ipinfo.io.", "restore-classic-widgets");
                         echo '<br>';
                         echo '<br>';
                         echo '<strong>';
                         echo sprintf(
                             __(
                                 'Our free <a href="%1$s">StopBadBots</a> and <a href="%2$s">AntiHacker</a> plugins help safeguard your site.',
-                                'wp-memory'
+                                'restore-classic-widgets'
                             ),
                             esc_url('https://stopbadbots.com'),
                             esc_url('https://antihackerplugin.com')
@@ -1241,21 +1419,23 @@ class wpmemory_Bill_Diagnose
                 echo '<div>'; //  <!-- end pai dos acordeos -->
 
 
+                //var_dump($this->global_variable_has_errors);
+                // 
 
                 // Errors ...
                 if ($this->global_variable_has_errors) { ?>
                     <h2 style="color: red;">
                         <?php
-                        echo esc_attr__("Site Errors", "wp-memory");
+                        echo esc_attr__("Site Errors", "restore-classic-widgets");
                         ?>
                     </h2>
                     <p>
                         <?php
-                        echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", "wp-memory");
+                        echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", "restore-classic-widgets");
                         ?>
                         <a href="https://wptoolsplugin.com/site-language-error-can-crash-your-site/">
                             <?php
-                            echo esc_attr__("Learn More", "wp-memory");
+                            echo esc_attr__("Learn More", "restore-classic-widgets");
                             ?>
                         </a>
                     </p>
@@ -1272,7 +1452,7 @@ class wpmemory_Bill_Diagnose
                     $bill_folders = $errorChecker->get_path_logs(); // Use -> (flecha)
 
                     echo "<br />";
-                    echo esc_attr__("This is a partial list of the errors found.", "wp-memory");
+                    echo esc_attr__("This is a partial list of the errors found.", "restore-classic-widgets");
                     echo "<br />";
                     /**
                      * Obtém o tamanho do arquivo em bytes.
@@ -1284,12 +1464,12 @@ class wpmemory_Bill_Diagnose
                     {
                         if (!file_exists($bill_filename) || !is_readable($bill_filename)) {
                             // return "File not readable.";
-                            return esc_attr__("File not readable.", "wp-memory");
+                            return esc_attr__("File not readable.", "restore-classic-widgets");
                         }
                         $fileSizeBytes = filesize($bill_filename);
                         if ($fileSizeBytes === false) {
                             //return "Size not determined.";
-                            return esc_attr__("Size not determined.", "wp-memory");
+                            return esc_attr__("Size not determined.", "restore-classic-widgets");
                         }
                         return $fileSizeBytes;
                     }
@@ -1303,7 +1483,7 @@ class wpmemory_Bill_Diagnose
                     {
                         if (!is_int($sizeBytes) || $sizeBytes < 0) {
                             // Retorna uma mensagem de erro se o tamanho for inválido
-                            return esc_attr__("Invalid size.", "wp-memory");
+                            return esc_attr__("Invalid size.", "restore-classic-widgets");
                         }
                         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
                         $unitIndex = 0;
@@ -1317,7 +1497,7 @@ class wpmemory_Bill_Diagnose
                     // Comeca a mostrar erros...
                     //
 
-                    // debug4($bill_folders);
+                    // // debug4($bill_folders);
 
                     // print_r($bill_folders);
 
@@ -1334,7 +1514,8 @@ class wpmemory_Bill_Diagnose
                                 echo "<strong>";
                                 echo esc_attr($bill_filename);
                                 echo "<br />";
-                                echo esc_attr__("File Size: ", "wp-memory");
+                                echo esc_attr__("File Size: ", "restore-classic-widgets");
+                                echo "&nbsp;";
                                 $fileSizeBytes = getFileSizeInBytes($bill_filename);
                                 if (is_int($fileSizeBytes)) {
                                     echo esc_attr(convertToHumanReadableSize($fileSizeBytes));
@@ -1344,11 +1525,15 @@ class wpmemory_Bill_Diagnose
                                 echo "</strong>";
                                 $bill_count++;
                                 $errorChecker = new ErrorChecker();
+                                // debug2($bill_filename);
                                 $marray = $errorChecker->bill_read_file($bill_filename, 3000);
                                 //$marray = $this->bill_read_file($bill_filename, 3000);
                                 if (gettype($marray) != "array" or count($marray) < 1) {
                                     continue;
                                 }
+
+                                // debug2($bill_filename);
+
                                 $total = count($marray);
                                 if (count($marray) > 0) {
                                     echo '<textarea style="width:99%;" id="anti_hacker" rows="12">';
@@ -1364,6 +1549,9 @@ class wpmemory_Bill_Diagnose
                                         if (empty($line)) {
                                             continue;
                                         }
+
+                                        // debug2($line);
+
                                         //  stack trace
                                         //[30-Sep-2023 11:28:52 UTC] PHP Stack trace:
                                         $pattern = "/PHP Stack trace:/";
@@ -1565,7 +1753,7 @@ class wpmemory_Bill_Diagnose
                                                 $log_entry = [
                                                     "Date" => $filteredDate,
                                                     "News Type" => $matches[1],
-                                                    "Problem Description" => wpmemory_bill_strip_strong99(
+                                                    "Problem Description" => restore_classic_widgetsbill_strip_strong99(
                                                         $matches[2]
                                                     ),
                                                 ];
@@ -1672,6 +1860,7 @@ class wpmemory_Bill_Diagnose
                                 echo "<br />";
                             }
                         } // end for next each error_log...
+                        echo '<br>';
                     } // end fo next each folder...
                 } // end tem errors...
                 echo "</div>";
@@ -1699,11 +1888,11 @@ class wpmemory_Bill_Diagnose
                     // Adicione uma guia de ajuda
                     $message = esc_attr__(
                         "These are critical issues that can have a significant impact on your site's performance. They can cause many plugins and functionalities to malfunction and, in some cases, render your site completely inoperative, depending on their severity. Address them promptly.",
-                        "wp-memory"
+                        "restore-classic-widgets"
                     );
                     $screen->add_help_tab([
                         "id"      => "custom-help-tab",
-                        "title"   => esc_attr__("Critical Issues", "wp-memory"),
+                        "title"   => esc_attr__("Critical Issues", "restore-classic-widgets"),
                         "content" => "<p>" . $message . "</p>",
                     ]);
                 }
@@ -1717,8 +1906,8 @@ $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
 $notification_url2 =
     "https://billplugin.com/site-language-error-can-crash-your-site/";
 */
-        $diagnose_instance = wpmemory_Bill_Diagnose::get_instance(
+        $diagnose_instance = restore_classic_widgetsBill_Diagnose::get_instance(
             $notification_url,
             $notification_url2,
         );
-        update_option("wpmemory_bill_show_warnings", date("Y-m-d"));
+        update_option("restore_classic_widgetsbill_show_warnings", date("Y-m-d"));
