@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore Classic Widgets
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.56
+Version: 4.58
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -253,7 +253,7 @@ function restore_classic_widgets_bill_hooking_catch_errors()
 {
     global $restore_classic_widgets_plugin_slug;
     global $restore_classic_widgets_is_admin;
-
+    require_once dirname(__FILE__) . "/includes/catch-errors/bill_install_catch_errors.php";
     $declared_classes = get_declared_classes();
     foreach ($declared_classes as $class_name) {
         if (strpos($class_name, "bill_catch_errors") !== false) {
@@ -263,9 +263,7 @@ function restore_classic_widgets_bill_hooking_catch_errors()
     $restore_classic_widgets_plugin_slug = 'restore-classic-widgets';
     require_once dirname(__FILE__) . "/includes/catch-errors/class_bill_catch_errors.php";
 }
-add_action("init", "restore_classic_widgets_bill_hooking_catch_errors", 15);
-
-
+// add_action("init", "restore_classic_widgets_bill_hooking_catch_errors", 15);
 
 
 

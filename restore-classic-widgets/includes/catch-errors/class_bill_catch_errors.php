@@ -17,19 +17,20 @@ if (function_exists('is_multisite') and is_multisite()) {
 call it
 function restore_classic_widgets_bill_hooking_catch_errors()
 {
-        if (function_exists('is_admin') && function_exists('current_user_can')) {
-            if(is_admin() and current_user_can("manage_options")){
-                $declared_classes = get_declared_classes();
-                foreach ($declared_classes as $class_name) {
-                    if (strpos($class_name, "bill_catch_errors") !== false) {
-                        return;
-                    }
-                }
-                require_once dirname(__FILE__) . "/includes/catch-errors/class_bill_catch_errors.php";
-            }
+    global $restore_classic_widgets_plugin_slug;
+    global $restore_classic_widgets_is_admin;
+    require_once dirname(__FILE__) . "/includes/catch-errors/bill_install_catch_errors.php";
+    $declared_classes = get_declared_classes();
+    foreach ($declared_classes as $class_name) {
+        if (strpos($class_name, "bill_catch_errors") !== false) {
+            return;
         }
+    }
+    $restore_classic_widgets_plugin_slug = 'restore-classic-widgets';
+    require_once dirname(__FILE__) . "/includes/catch-errors/class_bill_catch_errors.php";
 }
-add_action("init", "restore_classic_widgets_bill_hooking_catch_errors",15);
+add_action("init", "restore_classic_widgets_bill_hooking_catch_errors", 15);
+
 */
 
 
@@ -64,16 +65,23 @@ if (file_exists($plugin_file_path1)) {
 
 // debug4();
 
+/*
 $plugin_name = 'bill-catch-errors.php';
 
 // Retrieve all must-use plugins
 $wp_mu_plugins = get_mu_plugins();
 
+*/
+
 // Check if the plugin exists in the list of mu-plugins
 
+/*
 if (isset($wp_mu_plugins[$plugin_name])) {
-    return;
+    
 }
+*/
+
+
 
 add_action("wp_ajax_bill_minozzi_js_error_catched", "restore_classic_widgets_BillCatchErrors\\bill_minozzi_js_error_catched");
 add_action("wp_ajax_nopriv_bill_minozzi_js_error_catched", "restore_classic_widgets_BillCatchErrors\\bill_minozzi_js_error_catched");
