@@ -3,25 +3,26 @@
 Plugin Name: Restore Classic Widgets
 Plugin URI: https://BillMinozzi.com/support/
 Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets.
-Tags: restore widgets, Switch to classic widgets, enable classic widgets, Old widgets screen, Switch to old widgets UI
+Tags: classic widgets, enable classic widgets, oldMiss the old widgets, Miss the old widgets, Appearance Widgets Customizer
 Author: Bill Minozzi
 Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.7
-Stable tag: 4.59
-Version: 4.59
+Stable tag: 4.60
+Version: 4.60
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Activate this plugin to restore and enable the previous classic widgets settings screens. No expiration date.
+Miss the old widgets? Activate this plugin to restore and enable the previous classic widgets settings screens. No expiration date.
 
 == Description ==
 **Enable Classic Widgets**
 ★★★★★<br>
 
-> Restore and enable the previous WordPress classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration!
+>Bring back the classic widgets screens in Appearance – Widgets and the Customizer. Once activated and when using a classic (non-block) theme, restore and enable the previous WordPress classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration!
+
 
 
 **All our 20 plugins, including this one, perform a site checkup during installation. They verify available WordPress memory, logged errors, and other factors to ensure the server environment supports our plugin’s functionality, as it is a small part of the system.**
@@ -161,8 +162,6 @@ fix widgets not showing WordPress.
 For troubleshooting WordPress widgets and learning how do I restore my widgets, 
 just installand activate our plugin.
 
-Aqui está a página de Perguntas Frequentes (FAQ) formatada conforme solicitado:
-
 = How do I restore classic widgets in WordPress? =
 
 This question also addresses the following questions: restore classic widgets in wordpress, revert to classic widget settings, enable classic widget editor wordpress, restore previous wordpress widget screen, prevent gutenberg from editing widgets, revert to classic widgets wordpress, restore old wordpress layout, restore classic widgets wordpress, restore wordpress widgets, restore wordpress widget settings, restore previous wordpress widget screen, downgrade wordpress widgets.  
@@ -195,13 +194,48 @@ To revert to the classic widgets editor in WordPress, simply install the "Restor
 
 = How can I back up or import WordPress widgets? =
 
-This question also addresses the following questions: wordpress widget backup, import wordpress widgets.  
+This question also addresses the following questions: wordpress widget backup, import wordpress widgets, restore widgets, Switch to classic widgets, enable classic widgets, Old widgets screen, Switch to old widgets UI  
 For backing up or importing WordPress widgets, using the "Restore Classic Widgets" plugin ensures that your widget settings remain intact and compatible with classic WordPress interfaces.
+
+= Why are my widgets disappearing or no longer showing up in WordPress? =
+
+This issue often occurs because WordPress, starting with version 5.8 (released in July 2021), replaced the classic widget editor with the Gutenberg block-based widget system. This change can cause widgets to disappear from the admin area or frontend if your theme or plugins are not fully compatible with the block editor. Additionally, widget areas may vanish due to theme conflicts, migration issues, or accidental deletion of widget settings. To fix this, you can install the free plugin Restore Classic Widgets, which reverts to the familiar classic widget interface and restores visibility.
+
+This answer also addresses related questions like: widget disappeared wordpress, widget area missing wordpress, missing wordpress widgets, wordpress widgets not showing, and why did my widgets disappear in WordPress?
+
+
+= How can I easily manage and customize my WordPress widgets? =
+
+Managing and customizing widgets in WordPress became more complex with the introduction of the Gutenberg block editor in version 5.8, which replaced the intuitive classic widget screen. To simplify this, you can use plugins like Classic Widgets to restore the familiar interface or rely on built-in theme options that support widget areas. For customization, access the Appearance > Widgets section, where you can drag and drop widgets, adjust settings, and arrange them to fit your site’s layout. Backing up your widgets with a plugin like Widget Importer & Exporter ensures you don’t lose configurations during updates or migrations.
+
+This answer also addresses related questions like: widget settings wordpress, manage wordpress widgets, customize wordpress widgets, and easy widget management.
+
+
+= How do I restore the classic widget editor or recover lost widgets in WordPress? =
+
+Since WordPress 5.8 introduced the Gutenberg block editor for widgets, many users prefer the classic editor for its simplicity. To restore it, install the free Classic Widgets plugin, which disables Gutenberg for widgets and brings back the old interface. For recovering lost widgets—due to theme switches, updates, or deletions—check the Inactive Widgets section in the classic editor or use a backup plugin like UpdraftPlus to revert to a previous state. This approach ensures you can maintain control and recover functionality effortlessly.
+
+This answer also addresses related questions like: restore classic widgets wordpress, disable gutenberg widget editor, how do i switch to classic widgets, and recover deleted wordpress widgets.
+
+
+= What should I do if my widgets are malfunctioning or showing errors? =
+
+Widget malfunctions in WordPress often stem from plugin or theme conflicts, especially after updates like the shift to Gutenberg in version 5.8. To troubleshoot, deactivate recently added plugins one by one to identify the culprit, or switch to a default theme (e.g., Twenty Twenty-One) to rule out theme issues. Check the widget settings for corruption or data loss, and use the Classic Widgets plugin if the block editor is causing errors. For persistent problems, enable WordPress debug mode (via wp-config.php) to pinpoint the issue.
+
+This answer also addresses related questions like: widget troubleshooting, widget errors wordpress, widget malfunction, and widget functionality broken.
+
+
+= Why don’t my widgets work properly with my theme or after a migration? =
+
+Compatibility issues arise when themes or plugins aren’t updated to support the Gutenberg widget system introduced in WordPress 5.8, or when older themes lack widget area support. After migrations, widget settings may not transfer correctly if the new site’s theme doesn’t match the previous structure. To resolve this, install Classic Widgets to bypass Gutenberg conflicts, or use a plugin like Widget Importer & Exporter to ensure settings migrate properly. Always test with a compatible theme like Astra or GeneratePress for seamless integration.
+
+This answer also addresses related questions like: widget settings lost, widgets are disappearing, widget restoration.  missing widgets, widgets have disappeared, widgets no longer appearing, widget area disappeared under Appearance, WordPress Widgets Missing after Migration, Your theme does not support widgets, and ensure compatibility with older themes.
 
 == External service  ==
 When using our chat, only some information about issues, such as your language and data from the Diagnose tab, may be sent to our server. We do not share, publish, or disclose any information with third parties.
 
 == Changelog ==
+** 4.60 2025-03-31 - Many Improvements.
 ** 4.56/57 2025-02-28 - Many Improvements.
 ** 4.55 2025-02-22 - small Improvements.
 ** 4.53 2025-02-14 - small Improvements.
