@@ -193,7 +193,7 @@ class restore_classic_widgets_bill_catch_errors
             // alert();
 
             var errorQueue = [];
-            let timeout;
+            let restore_classic_widgets_timeout;
             var errorMessage = '';
 
             function isBot() {
@@ -217,8 +217,8 @@ class restore_classic_widgets_bill_catch_errors
                 if (errorQueue.length >= 5) {
                     sendErrorsToServer();
                 } else {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(sendErrorsToServer, 5000);
+                    clearTimeout(restore_classic_widgets_timeout);
+                    restore_classic_widgets_timeout = setTimeout(sendErrorsToServer, 5000);
                 }
             }
                 */
@@ -282,8 +282,8 @@ class restore_classic_widgets_bill_catch_errors
                 if (errorQueue.length >= 5) {
                     sendErrorsToServer();
                 } else {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(sendErrorsToServer, 5000);
+                    clearTimeout(restore_classic_widgets_timeout);
+                    restore_classic_widgets_timeout = setTimeout(sendErrorsToServer, 5000);
                 }
             }
 

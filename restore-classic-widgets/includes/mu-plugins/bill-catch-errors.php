@@ -351,7 +351,6 @@ function bill_minozzi_js_error_catched()
 
 
 
-
     // Loop para gravar os erros
     foreach ($errors as $error) {
         $parts = explode(" - ", $error);
