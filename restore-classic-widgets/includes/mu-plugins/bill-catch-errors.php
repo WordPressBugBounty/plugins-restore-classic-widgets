@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Bill Catch Errors
  * Description: Captures JavaScript errors and logs them on the server.
- * Version: 5.0
+ * Version: 7.0
  * Author: Bill Minozzi
  * Author URI: https://BillMinozzi.com
  * Text Domain: bill-catch-errors
@@ -12,43 +12,20 @@
 if (!defined("ABSPATH")) {
     die("Invalid request.");
 }
-
-/*
-    Capturamos com sucesso os avisos do jQuery.migrate para:
-JQMIGRATE: jQuery.fn.keydown() event shorthand is deprecated (arquivo: multi-contact-form.js, linha: 79).
-JQMIGRATE: jQuery.fn.click() event shorthand is deprecated (arquivo: multi-contact-form.js, linha: 3).
-Esses avisos foram registrados no log do servidor com o formato correto, replicando as mensagens do console.
-Sem êxito:
-Não capturamos outros avisos do jQuery.migrate, como 
-jQuery.fn.blur() (mencionado anteriormente em jquery.flexslider-min.js:5) 
-ou outros métodos obsoletos 
-(ex.: jQuery.fn.focus(), 
-jQuery.fn.bind()).
-*/
-
-
-
-
-
 // 2 2025 ==========================
 if (function_exists('is_multisite') && is_multisite()) {
     return;
 }
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_script('jquery-migrate');
+}, 10);
 $bill_format_error_log_data = get_transient('bill_error_log_date_format');
 if (!$bill_format_error_log_data) {
     $bill_format_error_log_info = bill_get_error_log_date_string();
     $bill_format_error_log_data = bill_detect_error_log_date_format($bill_format_error_log_info);
 }
-
-/*
-die(var_dump($bill_format_error_log_data));
-string(11) "d-M-Y H:i:s"
-*/
-
-
 function bill_get_error_log_date_string()
 {
-
     $error_log_path = ini_get("error_log");
     if (!empty($error_log_path)) {
         $error_log_path = trim($error_log_path);
@@ -60,8 +37,6 @@ function bill_get_error_log_date_string()
         }
     }
     $logFile = $error_log_path;
-
-
     // Check if log file exists and is readable
     if (!file_exists($logFile) || !is_readable($logFile)) {
         // debug5("Log file not found or not readable: $logFile");
@@ -85,7 +60,6 @@ function bill_get_error_log_date_string()
         return bill_fallback_date_format();
     }
 }
-
 function bill_fallback_date_format()
 {
     $default_format = 'Y-m-d H:i:s';
@@ -178,16 +152,12 @@ function bill_split_line($logLine)
         return null;
     }
 }
-
 /* Detect date format 
 A função analisa uma linha de log ($logLine) para detectar o formato de data em inglês 
 (ex.: "29 January 2025 12:44:30" ou "02-Feb-2025 12:34:56 UTC") 
 e retorna uma string no formato reconhecido com hora e, opcionalmente, fuso horário. 
 Ela armazena o formato detectado em um transient para uso futuro.
 */
-
-
-
 function bill_detect_error_log_date_format($logLine)
 {
     $bill_used_separators = ['-', '/', ' '];
@@ -198,16 +168,13 @@ function bill_detect_error_log_date_format($logLine)
             break;
         }
     }
-
     $r = bill_split_line($logLine);
     $data_partes = $r['data'];
     $fuso = $r['fuso'];
-
     $dia = null;
     $mes = null;
     $ano = null;
     $numeros_menores_12 = 0; // Contador para detectar ambiguidade
-
     foreach ($data_partes as $data_parte) {
         if (isset($dia) && isset($mes) && isset($ano)) {
             break;
@@ -234,13 +201,11 @@ function bill_detect_error_log_date_format($logLine)
             return bill_fallback_date_format();
         }
     }
-
     // Se houver ambiguidade (dois números <= 12), retorna fallback
     if ($numeros_menores_12 >= 2 && !isset($mes) || (isset($dia) && isset($mes) && intval($dia) <= 12 && intval($mes) <= 12)) {
         //debug4("Ambiguidade detectada na data: $logLine");
         return bill_fallback_date_format();
     }
-
     $original = $logLine;
     $format = '';
     if ($dia && $mes && $ano) {
@@ -265,35 +230,26 @@ function bill_detect_error_log_date_format($logLine)
             }
         }
     }
-
     if (empty($format)) {
         $format = bill_fallback_date_format();
     }
     if (strpos($format, 'H:i:s') === false) {
         $format .= " H:i:s";
     }
-
     set_transient('bill_error_log_date_format', $format, 30 * DAY_IN_SECONDS);
     $listaFusos = timezone_identifiers_list();
     $retorno = !empty($fuso) && in_array($fuso, $listaFusos) ? date($format) . ' ' . $fuso : date($format);
-
     return $retorno;
 }
-
-
-
 add_action("wp_ajax_bill_minozzi_js_error_catched", "bill_minozzi_js_error_catched");
 add_action("wp_ajax_nopriv_bill_minozzi_js_error_catched", "bill_minozzi_js_error_catched");
-
 function bill_minozzi_js_error_catched()
 {
-
     $bill_format_error_log_data = get_transient('bill_error_log_date_format');
     if (!$bill_format_error_log_data) {
         $bill_format_error_log_data = bill_fallback_date_format();
     }
     $error_log_updated = "NOT OK!";
-
     if (!isset($_REQUEST) || !isset($_REQUEST["bill_js_error_catched"])) {
         wp_die("empty error");
     }
@@ -301,17 +257,13 @@ function bill_minozzi_js_error_catched()
         status_header(406, "Invalid nonce");
         wp_die("Bad Nonce!");
     }
-
     $bill_js_error_catched = sanitize_text_field($_REQUEST["bill_js_error_catched"]);
     $bill_js_error_catched = trim($bill_js_error_catched);
     if (empty($bill_js_error_catched)) {
         wp_die("empty error");
     }
-
-
     // Split the error message
     $errors = explode(" | ", $bill_js_error_catched);
-
     // Configuração do arquivo de log (fora do loop)
     $logFile = ini_get("error_log");
     if (!empty($logFile)) {
@@ -324,12 +276,9 @@ function bill_minozzi_js_error_catched()
             $logFile = trailingslashit(ABSPATH) . 'error_log';
         }
     }
-
-
     try {
         $dir = dirname($logFile);
         if (!file_exists($dir)) {
-
             if (!is_writable(dirname($dir)) || !mkdir($dir, 0755, true)) {
                 wp_die("Unable to create log directory: $dir");
             }
@@ -348,9 +297,6 @@ function bill_minozzi_js_error_catched()
     } catch (Exception $e) {
         wp_die("Log setup error: " . $e->getMessage());
     }
-
-
-
     // Loop para gravar os erros
     foreach ($errors as $error) {
         $parts = explode(" - ", $error);
@@ -362,7 +308,6 @@ function bill_minozzi_js_error_catched()
         $errorLine = $parts[2];
         $logMessage = "Javascript " . $errorMessage . " - " . $errorURL . " - " . $errorLine;
         $formattedMessage = "[" . date($bill_format_error_log_data) . "] - " . $logMessage . PHP_EOL;
-
         //$ret_error_log = false;
         if (error_log($formattedMessage, 3, $logFile)) {
             //$ret_error_log = true;
@@ -381,10 +326,8 @@ function bill_minozzi_js_error_catched()
             }
         }
     }
-
     die($error_log_updated);
 }
-
 class bill_minozzi_bill_catch_errors
 {
     public function __construct()
@@ -393,28 +336,40 @@ class bill_minozzi_bill_catch_errors
         add_action("admin_head", [$this, "add_bill_javascript_to_header"]);
         // $this->gravar2(__LINE__);
     }
-
- 
-
-    public function add_bill_javascript_to_header() {
+    public function add_bill_javascript_to_header()
+    {
         $nonce = wp_create_nonce("bill-catch-js-errors");
         $ajax_url = esc_js($this->get_ajax_url()) . "?action=bill_minozzi_js_error_catched&_wpnonce=" . $nonce;
-        ?>
+?>
         <script type="text/javascript">
-            var errorQueue = [];
+            if (typeof jQuery !== 'undefined' && typeof jQuery.migrateWarnings !== 'undefined') {
+                jQuery.migrateTrace = true; // Habilitar stack traces
+                jQuery.migrateMute = false; // Garantir avisos no console
+            }
             let bill_timeout;
-    
+
             function isBot() {
                 const bots = ['crawler', 'spider', 'baidu', 'duckduckgo', 'bot', 'googlebot', 'bingbot', 'facebook', 'slurp', 'twitter', 'yahoo'];
                 const userAgent = navigator.userAgent.toLowerCase();
                 return bots.some(bot => userAgent.includes(bot));
             }
-    
-            // Sobrescrita de console.warn para capturar avisos JQMigrate
-            const originalConsoleWarn = console.warn;
+            const originalConsoleWarn = console.warn; // Armazenar o console.warn original
             const sentWarnings = [];
-    
+            const bill_errorQueue = [];
+            const slugs = [
+                "antibots", "antihacker", "bigdump-restore", "boatdealer", "cardealer",
+                "database-backup", "disable-wp-sitemap", "easy-update-urls", "hide-site-title",
+                "lazy-load-disable", "multidealer", "real-estate-right-now", "recaptcha-for-all",
+                "reportattacks", "restore-classic-widgets", "s3cloud", "site-checkup",
+                "stopbadbots", "toolsfors", "toolstruthsocial", "wp-memory", "wptools"
+            ];
+
+            function hasSlug(warningMessage) {
+                return slugs.some(slug => warningMessage.includes(slug));
+            }
+            // Sobrescrita de console.warn para capturar avisos JQMigrate
             console.warn = function(message, ...args) {
+                // Processar avisos JQMIGRATE
                 if (typeof message === 'string' && message.includes('JQMIGRATE')) {
                     if (!sentWarnings.includes(message)) {
                         sentWarnings.push(message);
@@ -423,94 +378,66 @@ class bill_minozzi_bill_catch_errors
                         try {
                             const stackTrace = new Error().stack.split('\n');
                             for (let i = 1; i < stackTrace.length && i < 10; i++) {
-                                const match = stackTrace[i].match(/at\s+.*?\((.*):(\d+):(\d+)\)/) || 
-                                              stackTrace[i].match(/at\s+(.*):(\d+):(\d+)/);
-                                if (match && match[1].includes('.js') && !match[1].includes('jquery-migrate.js') && !match[1].includes('jquery.js')) {
+                                const match = stackTrace[i].match(/at\s+.*?\((.*):(\d+):(\d+)\)/) ||
+                                    stackTrace[i].match(/at\s+(.*):(\d+):(\d+)/);
+                                if (match && match[1].includes('.js') &&
+                                    !match[1].includes('jquery-migrate.js') &&
+                                    !match[1].includes('jquery.js')) {
                                     file = match[1];
                                     line = match[2];
                                     break;
                                 }
                             }
                         } catch (e) {
-                            // Ignorar erros de stack trace
+                            // Ignorar erros
                         }
-    
-                        const slugs = [
-                            "antibots",
-                            "antihacker",
-                            "bigdump-restore",
-                            "boatdealer",
-                            "cardealer",
-                            "database-backup",
-                            "disable-wp-sitemap",
-                            "easy-update-urls",
-                            "hide-site-title",
-                            "lazy-load-disable",
-                            "multidealer",
-                            "real-estate-right-now",
-                            "recaptcha-for-all",
-                            "reportattacks",
-                            "restore-classic-widgets",
-                            "s3cloud",
-                            "site-checkup",
-                            "stopbadbots",
-                            "toolsfors",
-                            "toolstruthsocial",
-                            "wp-memory",
-                            "wptools"
-                        ];
-    
-                        function hasSlug(warningMessage) {
-                           return slugs.some(slug => warningMessage.includes(slug));
-                        }
-    
                         const warningMessage = message.replace('JQMIGRATE:', 'Error:').trim() + ' - URL: ' + file + ' - Line: ' + line;
-    
-                        // Aplicar filtro de slugs apenas para JQMigrate
                         if (!hasSlug(warningMessage)) {
-                            errorQueue.push(warningMessage);
+                            bill_errorQueue.push(warningMessage);
                             handleErrorQueue();
                         }
                     }
                 }
-                originalConsoleWarn.apply(console, arguments);
+                // Repassar todas as mensagens para o console.warn original
+                originalConsoleWarn.apply(console, [message, ...args]);
             };
-    
+            //originalConsoleWarn.apply(console, arguments);
+            // Restaura o console.warn original após 6 segundos
+            setTimeout(() => {
+                console.warn = originalConsoleWarn;
+            }, 6000);
+
             function handleErrorQueue() {
                 // Filtrar mensagens de bots antes de processar
                 if (isBot()) {
-                    errorQueue = []; // Limpar a fila se for bot
+                    bill_errorQueue = []; // Limpar a fila se for bot
                     return;
                 }
-    
-                if (errorQueue.length >= 5) {
+                if (bill_errorQueue.length >= 5) {
                     sendErrorsToServer();
                 } else {
                     clearTimeout(bill_timeout);
-                    bill_timeout = setTimeout(sendErrorsToServer, 5000);
+                    bill_timeout = setTimeout(sendErrorsToServer, 7000);
                 }
             }
-    
+
             function sendErrorsToServer() {
-                if (errorQueue.length > 0) {
-                    const message = errorQueue.join(' | ');
-                    console.log('[Bill Catch] Enviando ao Servidor:', message); // Log temporário para depuração
+                if (bill_errorQueue.length > 0) {
+                    const message = bill_errorQueue.join(' | ');
+                    //console.log('[Bill Catch] Enviando ao Servidor:', message); // Log temporário para depuração
                     const xhr = new XMLHttpRequest();
                     const nonce = '<?php echo esc_js($nonce); ?>';
                     const ajax_url = '<?php echo $ajax_url; ?>';
                     xhr.open('POST', encodeURI(ajax_url));
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.send('action=bill_minozzi_js_error_catched&_wpnonce=' + nonce + '&bill_js_error_catched=' + encodeURIComponent(message));
-                    errorQueue = [];
+                    // bill_errorQueue = [];
+                    bill_errorQueue.length = 0; // Limpa o array sem reatribuir
                 }
             }
         </script>
-        <?php
+<?php
     }
-    
-    
-    
-
     private function get_ajax_url()
     {
         return esc_attr(admin_url("admin-ajax.php"));
