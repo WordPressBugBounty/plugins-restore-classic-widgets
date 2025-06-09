@@ -128,10 +128,19 @@
     /* Espaço entre a imagem e o texto */
 }
 
+
+
+/* Container dos botões de Auto Checkup */
 .auto-checkup-container {
     display: flex;
     justify-content: center;
     max-width: 100%;
+    /* 
+      NOVA PROPRIEDADE: 
+      Adiciona um espaço de 20 pixels entre os botões.
+      Ajuste este valor se precisar de mais ou menos espaço.
+    */
+    gap: 20px;
 }
 
 #auto-checkup-button {
@@ -244,4 +253,48 @@
 
 #gif-container {
     padding: 10px;
+}
+
+/* ========================================================== */
+/* CSS para a animação de pulsar dos botões de Auto Checkup */
+/* Adicionado para a nova funcionalidade de inatividade   */
+/* (VERSÃO ATUALIZADA - A ANIMAÇÃO PARA SOZINHA)        */
+/* ========================================================== */
+
+/* Garante que os botões tenham um posicionamento relativo para o efeito de sombra funcionar corretamente */
+#auto-checkup,
+#auto-checkup2 {
+    position: relative;
+    /* Adiciona uma transição suave para o caso de outras regras de transform existirem */
+    transition: transform 0.3s ease;
+}
+
+/* 
+    Define a animação com alta especificidade, usando o ID do formulário e o ID do botão.
+    Isso garante que essa regra seja mais "forte" do que a regra genérica `#chat-form button`.
+  */
+#chat-form button#auto-checkup.pulse-button,
+#chat-form button#auto-checkup2.pulse-button {
+    /* 
+      MUDANÇA PRINCIPAL AQUI:
+      Trocamos 'infinite' por '3'. A animação agora se repetirá 3 vezes e parará.
+    */
+    animation: pulse-animation 2s 3 !important;
+}
+
+@keyframes pulse-animation {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+    }
 }

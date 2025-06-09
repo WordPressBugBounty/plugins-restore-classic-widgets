@@ -55,7 +55,7 @@ class Bill_Catch_Bots
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->table_name = $wpdb->prefix . 'bill_catch_bots';
+        $this->table_name = $wpdb->prefix . 'bill_catch_some_bots';
         $bill_bad_host = [
             '1and1.com',
             'ALICOULD',

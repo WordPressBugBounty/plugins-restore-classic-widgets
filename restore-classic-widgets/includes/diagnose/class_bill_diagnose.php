@@ -1,6 +1,6 @@
 <?php
 
-namespace restore_classic_widgetsBillDiagnose;
+namespace restore_classic_widgets_BillDiagnose;
 // 2023-08 upd: 2023-10-17 2024-06=21 2024-31-12 2025-02-11
 if (!defined('ABSPATH')) {
     die('Invalid request.');
@@ -361,8 +361,8 @@ class ErrorChecker
 
         //die();
 
-
-        return $bill_folders;
+        return array_unique($bill_folders);
+        //return $bill_folders;
     }
 
 
@@ -690,7 +690,7 @@ class MemoryChecker
         return $wpmemory;
     }
 }
-class restore_classic_widgetsBill_Diagnose
+class restore_classic_widgets_Bill_Diagnose
 {
     protected $global_plugin_slug;
     private static $instance = null;
@@ -847,7 +847,7 @@ class restore_classic_widgetsBill_Diagnose
     // Helper function to check if a notification has been displayed today
     public function is_notification_displayed_today()
     {
-        $last_notification_date = get_option("restore_classic_widgetsbill_show_warnings");
+        $last_notification_date = get_option("restore_classic_widgets_bill_show_warnings");
         $today = date("Y-m-d");
         return $last_notification_date === $today;
     }
@@ -868,8 +868,8 @@ class restore_classic_widgetsBill_Diagnose
 
         global $wpdb;
 
-        if (!function_exists('restore_classic_widgetsbill_strip_strong99')) {
-            function restore_classic_widgetsbill_strip_strong99($htmlString)
+        if (!function_exists('restore_classic_widgets_bill_strip_strong99')) {
+            function restore_classic_widgets_bill_strip_strong99($htmlString)
             {
                 // return $htmlString;
                 // Use preg_replace para remover as tags <strong>
@@ -909,11 +909,11 @@ class restore_classic_widgetsBill_Diagnose
                 <div id="error-message" style="display:none;"></div> <!-- Mensagem de erro -->
                 <form id="chat-form">
                     <div id="input-group">
-                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Enter your message...', "restore-classic-widgets"); ?>" />
+                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Describe your issue, or use the buttons below to check for errors or server settings...', "restore-classic-widgets"); ?>" />
                         <button type="submit"><?php echo esc_attr__('Send', "restore-classic-widgets"); ?></button>
                     </div>
                     <div id="action-instruction" style="text-align: center; margin-top: 10px;">
-                        <span><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log ou server info configuration.", "restore-classic-widgets"); ?></span>
+                        <span><big><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log or server info configuration.", "restore-classic-widgets"); ?></big></span>
                     </div>
                     <div class="auto-checkup-container" style="text-align: center; margin-top: 10px;">
 
@@ -1236,8 +1236,15 @@ class restore_classic_widgetsBill_Diagnose
                 if (is_plugin_active('antihacker/antihacker.php')) {
                     $check_for_bots = false;
                 }
+
+
+
                 if ($check_for_bots) {
                     global $wpdb;
+
+                    debug4($check_for_bots);
+
+
                     $table_name = $wpdb->prefix . 'bill_catch_some_bots';
                     $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'");
                     if (!$table_exists == $table_name) {
@@ -1272,6 +1279,11 @@ class restore_classic_widgetsBill_Diagnose
                     // Verificar se há registros suficientes
                     $num_attacks = 0;
                     $diferenca_segundos = 0;
+
+
+
+                    debug4($rows);
+
                     if (!empty($rows) && count($rows) > 0) {
 
                         $num_attacks  = count($rows);
@@ -1500,6 +1512,8 @@ class restore_classic_widgetsBill_Diagnose
                     // // debug4($bill_folders);
 
                     // print_r($bill_folders);
+
+                    debug4($bill_folders);
 
 
 
@@ -1753,7 +1767,7 @@ class restore_classic_widgetsBill_Diagnose
                                                 $log_entry = [
                                                     "Date" => $filteredDate,
                                                     "News Type" => $matches[1],
-                                                    "Problem Description" => restore_classic_widgetsbill_strip_strong99(
+                                                    "Problem Description" => restore_classic_widgets_bill_strip_strong99(
                                                         $matches[2]
                                                     ),
                                                 ];
@@ -1906,8 +1920,8 @@ $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
 $notification_url2 =
     "https://billplugin.com/site-language-error-can-crash-your-site/";
 */
-        $diagnose_instance = restore_classic_widgetsBill_Diagnose::get_instance(
+        $diagnose_instance = restore_classic_widgets_Bill_Diagnose::get_instance(
             $notification_url,
             $notification_url2,
         );
-        update_option("restore_classic_widgetsbill_show_warnings", date("Y-m-d"));
+        update_option("restore_classic_widgets_bill_show_warnings", date("Y-m-d"));
