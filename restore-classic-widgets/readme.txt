@@ -9,8 +9,8 @@ Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 4.65
-Version: 4.65
+Stable tag: 4.66
+Version: 4.66
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -235,7 +235,7 @@ This answer also addresses related questions like: widget settings lost, widgets
 When using our chat, only some information about issues, such as your language and data from the Diagnose tab, may be sent to our server. We do not share, publish, or disclose any information with third parties.
 
 == Changelog ==
-** 4.65 2025-06-09 - Improvements on chat.
+** 4.65/66 2025-06-11 - Improvements on chat.
 ** 4.64 2025-05-08 - Improvements on catch JSd errors.
 ** 4.63 2025-05-04 - Improvements on catch JSd errors.
 ** 4.61 2025-04-23 - Improvements on catch JSd errors.
