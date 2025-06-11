@@ -1,6 +1,6 @@
 <?php
 
-namespace easy_update_urls_BillDiagnose;
+namespace restore_classic_widgets_BillDiagnose;
 // 2023-08 upd: 2023-10-17 2024-06=21 2024-31-12 2025-02-11
 if (!defined('ABSPATH')) {
     die('Invalid request.');
@@ -85,13 +85,13 @@ function add_help_tab_to_screen()
         $hmessage = esc_attr__(
             'Here are some details about error and memory monitoring for your plugin. Errors and low memory can prevent your site from functioning properly. On this page, you will find a partial list of the most recent errors and warnings. If you need more details, use the chat form, which will search for additional information using Artificial Intelligence.  
 If you need to dive deeper, install the free plugin WPTools, which provides more in-depth insights.',
-            "easy-update-urls"
+            "restore-classic-widgets"
         );
         // Adiciona a aba de ajuda
         $screen->add_help_tab([
             'id'      => 'site-health', // ID único para a aba
-            'title'   => esc_attr__('Memory & Error Monitoring', "easy-update-urls"), // Título da aba
-            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', "easy-update-urls") . '</p>
+            'title'   => esc_attr__('Memory & Error Monitoring', "restore-classic-widgets"), // Título da aba
+            'content' => '<p>' . esc_attr__('Welcome to plugin Insights!', "restore-classic-widgets") . '</p>
                           <p>' . $hmessage . '</p>',
         ]);
     }
@@ -690,7 +690,7 @@ class MemoryChecker
         return $wpmemory;
     }
 }
-class easy_update_urls_Bill_Diagnose
+class restore_classic_widgets_Bill_Diagnose
 {
     protected $global_plugin_slug;
     private static $instance = null;
@@ -830,15 +830,15 @@ class easy_update_urls_Bill_Diagnose
         if ($memory["free"] > 30 and $wpmemory["percent"] < 0.85) {
             return;
         }
-        $message = esc_attr__("Our plugin", "easy-update-urls");
+        $message = esc_attr__("Our plugin", "restore-classic-widgets");
         $message .= ' (' . $this->plugin_slug . ') ';
-        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", "easy-update-urls");
+        $message .= esc_attr__("cannot function properly because your WordPress Memory Limit is too low. Your site will experience serious issues, even if you deactivate our plugin.", "restore-classic-widgets");
         $message .=
             '<a href="' .
             esc_url($this->notification_url) .
             '">' .
             " " .
-            esc_attr__("Learn more", "easy-update-urls") .
+            esc_attr__("Learn more", "restore-classic-widgets") .
             "</a>";
         echo '<div class="notice notice-error is-dismissible">';
         echo '<p style="color: red;">' . wp_kses_post($message) . "</p>";
@@ -847,7 +847,7 @@ class easy_update_urls_Bill_Diagnose
     // Helper function to check if a notification has been displayed today
     public function is_notification_displayed_today()
     {
-        $last_notification_date = get_option("easy_update_urls_bill_show_warnings");
+        $last_notification_date = get_option("restore_classic_widgets_bill_show_warnings");
         $today = date("Y-m-d");
         return $last_notification_date === $today;
     }
@@ -858,7 +858,7 @@ class easy_update_urls_Bill_Diagnose
         $tabs["Critical Issues"] = esc_html_x(
             "Critical Issues",
             "Site Health",
-            "easy-update-urls"
+            "restore-classic-widgets"
         );
         return $tabs;
     }
@@ -868,8 +868,8 @@ class easy_update_urls_Bill_Diagnose
 
         global $wpdb;
 
-        if (!function_exists('easy_update_urls_bill_strip_strong99')) {
-            function easy_update_urls_bill_strip_strong99($htmlString)
+        if (!function_exists('restore_classic_widgets_bill_strip_strong99')) {
+            function restore_classic_widgets_bill_strip_strong99($htmlString)
             {
                 // return $htmlString;
                 // Use preg_replace para remover as tags <strong>
@@ -889,18 +889,18 @@ class easy_update_urls_Bill_Diagnose
             <p style="border: 1px solid red; padding: 10px;">
                 <strong>
                     <?php
-                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", "easy-update-urls");
+                    echo esc_attr__("Displaying the latest recurring errors (Javascript Included) from your error log file and eventually alert about low WordPress memory limit is a courtesy of plugin", "restore-classic-widgets");
                     echo ': ' . esc_attr($this->global_plugin_slug) . '. ';
-                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", "easy-update-urls");
+                    echo esc_attr__("Disabling our plugin does not stop the errors from occurring; it simply means you will no longer be notified here that they are happening, but they can still harm your site.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", "easy-update-urls");
+                    echo esc_attr__("Click the help button in the top right or go directly to the AI chat box below for more specific information on the issues listed.", "restore-classic-widgets");
                     ?>
                 </strong>
             </p>
             <!-- chat -->
             <div id="chat-box">
                 <div id="chat-header">
-                    <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "easy-update-urls"); ?></h2>
+                    <h2><?php echo esc_attr__("Artificial Intelligence Support Chat for Issues and Solutions", "restore-classic-widgets"); ?></h2>
                 </div>
                 <div id="gif-container">
                     <div class="spinner999"></div>
@@ -909,22 +909,22 @@ class easy_update_urls_Bill_Diagnose
                 <div id="error-message" style="display:none;"></div> <!-- Mensagem de erro -->
                 <form id="chat-form">
                     <div id="input-group">
-                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Describe your issue, or use the buttons below to check for errors or server settings...', "easy-update-urls"); ?>" />
-                        <button type="submit"><?php echo esc_attr__('Send', "easy-update-urls"); ?></button>
+                        <input type="text" id="chat-input" placeholder="<?php echo esc_attr__('Describe your issue, or use the buttons below to check for errors or server settings...', "restore-classic-widgets"); ?>" />
+                        <button type="submit"><?php echo esc_attr__('Send', "restore-classic-widgets"); ?></button>
                     </div>
                     <div id="action-instruction" style="text-align: center; margin-top: 10px;">
-                        <span><big><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log or server info configuration.", "easy-update-urls"); ?></big></span>
+                        <span><big><?php echo esc_attr__("Enter a message and click 'Send', or just click 'Auto Checkup' to analyze error log or server info configuration.", "restore-classic-widgets"); ?></big></span>
                     </div>
                     <div class="auto-checkup-container" style="text-align: center; margin-top: 10px;">
 
                         <button type="button" id="auto-checkup">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup for Errors', "easy-update-urls"); ?>
+                            <?php echo esc_attr__('Auto Checkup for Errors', "restore-classic-widgets"); ?>
                         </button>
                         &nbsp;&nbsp;&nbsp;
                         <button type="button" id="auto-checkup2">
                             <img src="<?php echo plugin_dir_url(__FILE__) . 'robot2.png'; ?>" alt="" width="35" height="30">
-                            <?php echo esc_attr__('Auto Checkup Server ', "easy-update-urls"); ?>
+                            <?php echo esc_attr__('Auto Checkup Server ', "restore-classic-widgets"); ?>
                         </button>
 
 
@@ -938,7 +938,7 @@ class easy_update_urls_Bill_Diagnose
 
             <h3 style="color: red;">
                 <?php
-                echo esc_attr__("Potential Problems", "easy-update-urls");
+                echo esc_attr__("Potential Problems", "restore-classic-widgets");
                 ?>
             </h3>
 
@@ -967,7 +967,7 @@ class easy_update_urls_Bill_Diagnose
                     ?>
                             <!-- Título da seção -->
                             <h2 style="color: red;">
-                                <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", "easy-update-urls"); ?>
+                                <?php echo esc_attr__("Low WordPress Memory Limit (click to open)", "restore-classic-widgets"); ?>
                             </h2>
                             <!-- Conteúdo da seção -->
                             <div>
@@ -980,11 +980,11 @@ class easy_update_urls_Bill_Diagnose
                                     if ($wpmemory["percent"] > 0.7) {
                                         echo '<span style="color:' . esc_attr($wpmemory["color"]) . ';">';
                                     }
-                                    echo esc_attr__("Your usage now", "easy-update-urls") . ": " . esc_attr($wpmemory["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
+                                    echo esc_attr__("Your usage now", "restore-classic-widgets") . ": " . esc_attr($wpmemory["usage"]) . "MB &nbsp;&nbsp;&nbsp;";
                                     if ($wpmemory["percent"] > 0.7) {
                                         echo "</span>";
                                     }
-                                    echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", "easy-update-urls") . " : " . esc_attr($wpmemory["limit"]) . "MB";
+                                    echo "|&nbsp;&nbsp;&nbsp;" . esc_attr__("Total Php Server Memory", "restore-classic-widgets") . " : " . esc_attr($wpmemory["limit"]) . "MB";
                                     ?>
                                 </b>
                                 <hr>
@@ -992,11 +992,11 @@ class easy_update_urls_Bill_Diagnose
                                 //$free = $wpmemory["wp_limit"] - $wpmemory["usage"];
                                 echo '<p>';
                                 echo '<br>';
-                                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", "easy-update-urls");
+                                echo esc_attr__("Your WordPress Memory Limit is too low, which can lead to critical issues on your site due to insufficient resources. Promptly address this issue before continuing.", "restore-classic-widgets");
                                 echo '</p>';
                                 ?>
                                 <a href="https://wpmemory.com/fix-low-memory-limit/">
-                                    <?php echo esc_attr__("Learn More", "easy-update-urls"); ?>
+                                    <?php echo esc_attr__("Learn More", "restore-classic-widgets"); ?>
                                 </a>
                             </div>
                     <?php }
@@ -1090,9 +1090,9 @@ class easy_update_urls_Bill_Diagnose
 
                     // Determina a mensagem com base na média
                     if ($average <= 8) {
-                        $message = esc_html__("The page load time is poor (click to open)", "easy-update-urls");
+                        $message = esc_html__("The page load time is poor (click to open)", "restore-classic-widgets");
                     } else {
-                        $message = esc_html__("The page load time is very poor (click to open)", "easy-update-urls");
+                        $message = esc_html__("The page load time is very poor (click to open)", "restore-classic-widgets");
                     }
 
                     echo $message; // Exibe a mensagem diretamente
@@ -1103,29 +1103,29 @@ class easy_update_urls_Bill_Diagnose
 
                     //  if ($average > 5) {
                     // Exibe as informações quando a média for maior que 5
-                    echo esc_html__("The Load average of your front pages is: ", "easy-update-urls");
+                    echo esc_html__("The Load average of your front pages is: ", "restore-classic-widgets");
                     echo esc_html($average);
                     echo '<br>';
-                    echo esc_html__("Loading time can significantly impact your SEO.", "easy-update-urls");
+                    echo esc_html__("Loading time can significantly impact your SEO.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_html__("Many users will abandon the site before it fully loads.", "easy-update-urls");
+                    echo esc_html__("Many users will abandon the site before it fully loads.", "restore-classic-widgets");
                     echo '<br>';
-                    echo esc_html__("Search engines prioritize faster-loading pages, as they improve user experience and reduce bounce rates.", "easy-update-urls");
+                    echo esc_html__("Search engines prioritize faster-loading pages, as they improve user experience and reduce bounce rates.", "restore-classic-widgets");
                     //}
                     echo '<br>';
                     echo '<br>';
                     echo '<strong>';
-                    echo esc_html__("Suggestions:", "easy-update-urls") . '<br>';
+                    echo esc_html__("Suggestions:", "restore-classic-widgets") . '<br>';
                     echo '</strong>';
-                    echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin Antihacker.", "easy-update-urls") . '<br>';
-                    echo esc_html__("Protect against hackers: They use bots to search for vulnerabilities and overload the server. Install our free plugin AntiHacker", "easy-update-urls") . '<br>';
+                    echo esc_html__("Block bots: They overload the server and steal your content. Install our free plugin Antihacker.", "restore-classic-widgets") . '<br>';
+                    echo esc_html__("Protect against hackers: They use bots to search for vulnerabilities and overload the server. Install our free plugin AntiHacker", "restore-classic-widgets") . '<br>';
 
-                    echo esc_html__("Check your site for errors with free plugin wpTools. Errors and warnings can increase page load time by being recorded in log files, consuming resources and slowing down performance.", "easy-update-urls");
+                    echo esc_html__("Check your site for errors with free plugin wpTools. Errors and warnings can increase page load time by being recorded in log files, consuming resources and slowing down performance.", "restore-classic-widgets");
                     echo '<br>';
 
                     echo '<br>';
                     echo '<a href="https://wptoolsplugin.com/page-load-times-and-their-negative-impact-on-seo/">';
-                    echo esc_html__("Learn more about Page Load Times and their negative impact on SEO and more", "easy-update-urls") . "...";
+                    echo esc_html__("Learn more about Page Load Times and their negative impact on SEO and more", "restore-classic-widgets") . "...";
                     echo "</a>";
 
                     // echo '<hr>';
@@ -1167,14 +1167,14 @@ class easy_update_urls_Bill_Diagnose
                     echo '<div id="accordion3">';
                     //echo '<hr>';
                     echo '<h2 style="color: red;">';
-                    echo esc_attr__('Plugins with Updates Available (click to open)', 'easy-update-urls');
+                    echo esc_attr__('Plugins with Updates Available (click to open)', 'restore-classic-widgets');
                     echo '</h2>';
                     echo '<div>';
 
-                    esc_attr_e("Keeping your plugins up to date is crucial for ensuring security, performance, and compatibility with the latest features and improvements.", "easy-update-urls");
+                    esc_attr_e("Keeping your plugins up to date is crucial for ensuring security, performance, and compatibility with the latest features and improvements.", "restore-classic-widgets");
                     echo '<br>';
                     echo '<strong>';
-                    esc_attr_e("Our free AntiHacker plugin can even check for abandoned plugins that you are using, as these plugins may no longer receive security updates, leaving your site vulnerable to attacks and potential exploits, which can compromise your site's integrity and data.", "easy-update-urls");
+                    esc_attr_e("Our free AntiHacker plugin can even check for abandoned plugins that you are using, as these plugins may no longer receive security updates, leaving your site vulnerable to attacks and potential exploits, which can compromise your site's integrity and data.", "restore-classic-widgets");
 
 
                     echo '<br>';
@@ -1297,17 +1297,17 @@ class easy_update_urls_Bill_Diagnose
                         function format_time_difference2($seconds)
                         {
                             if ($seconds < 60) {
-                                return "$seconds" . " " . esc_attr__("seconds", 'easy-update-urls');
+                                return "$seconds" . " " . esc_attr__("seconds", 'restore-classic-widgets');
                             } elseif ($seconds < 3600) {
-                                return round($seconds / 60) . " " . esc_attr__("minutes", 'easy-update-urls');
+                                return round($seconds / 60) . " " . esc_attr__("minutes", 'restore-classic-widgets');
                             } elseif ($seconds < 86400) {
-                                return round($seconds / 3600) . " " . esc_attr__("hour(s)", 'easy-update-urls');
+                                return round($seconds / 3600) . " " . esc_attr__("hour(s)", 'restore-classic-widgets');
                             } elseif ($seconds < 604800) {
-                                return round($seconds / 86400) . " " . esc_attr__("day(s)", 'easy-update-urls');
+                                return round($seconds / 86400) . " " . esc_attr__("day(s)", 'restore-classic-widgets');
                             } elseif ($seconds < 2592000) {
-                                return round($seconds / 604800) . " " . esc_attr__("week(s)", 'easy-update-urls');
+                                return round($seconds / 604800) . " " . esc_attr__("week(s)", 'restore-classic-widgets');
                             } else {
-                                return round($seconds / 2592000) . " " . esc_attr__("month(s)", 'easy-update-urls');
+                                return round($seconds / 2592000) . " " . esc_attr__("month(s)", 'restore-classic-widgets');
                             }
                         }
                         function format_time_difference($seconds)
@@ -1354,28 +1354,28 @@ class easy_update_urls_Bill_Diagnose
                         echo '<br>';
                         echo '<div id="accordion4">';
                         echo '<h2 style="color: red;">';
-                        echo esc_attr__('Bots and Hackers Attack (click to open)', 'easy-update-urls');
+                        echo esc_attr__('Bots and Hackers Attack (click to open)', 'restore-classic-widgets');
                         echo '</h2>';
                         echo '<div>';
-                        echo esc_attr__('Number of last attacks: ', 'easy-update-urls') . $num_attacks;
+                        echo esc_attr__('Number of last attacks: ', 'restore-classic-widgets') . $num_attacks;
                         echo ' in ';
                         echo format_time_difference($diferenca_segundos);
                         echo '<br>';
                         //echo $diferenca_segundos;
                         echo '<br>';
                         //echo '</strong>';
-                        esc_attr_e("Bots aren’t human—they’re automated scripts that visit your site. They steal your content, making it less unique. They overload your server, slowing it down and hurting your SEO.", "easy-update-urls");
+                        esc_attr_e("Bots aren’t human—they’re automated scripts that visit your site. They steal your content, making it less unique. They overload your server, slowing it down and hurting your SEO.", "restore-classic-widgets");
                         echo '<br>';
-                        esc_attr_e("Hackers look for vulnerabilities to access your server. Even small sites are targets—they use your server to send spam and attack others, damaging your IP and email reputation.", "easy-update-urls");
+                        esc_attr_e("Hackers look for vulnerabilities to access your server. Even small sites are targets—they use your server to send spam and attack others, damaging your IP and email reputation.", "restore-classic-widgets");
                         echo '<br>';
-                        esc_attr_e("If you doubt the accuracy of the table below, check with your hosting provider or check the IPs with the site https://ipinfo.io.", "easy-update-urls");
+                        esc_attr_e("If you doubt the accuracy of the table below, check with your hosting provider or check the IPs with the site https://ipinfo.io.", "restore-classic-widgets");
                         echo '<br>';
                         echo '<br>';
                         echo '<strong>';
                         echo sprintf(
                             __(
                                 'Our free <a href="%1$s">StopBadBots</a> and <a href="%2$s">AntiHacker</a> plugins help safeguard your site.',
-                                'easy-update-urls'
+                                'restore-classic-widgets'
                             ),
                             esc_url('https://stopbadbots.com'),
                             esc_url('https://antihackerplugin.com')
@@ -1438,16 +1438,16 @@ class easy_update_urls_Bill_Diagnose
                 if ($this->global_variable_has_errors) { ?>
                     <h2 style="color: red;">
                         <?php
-                        echo esc_attr__("Site Errors", "easy-update-urls");
+                        echo esc_attr__("Site Errors", "restore-classic-widgets");
                         ?>
                     </h2>
                     <p>
                         <?php
-                        echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", "easy-update-urls");
+                        echo esc_attr__("Your site has experienced errors for the past 2 days. These errors, including JavaScript issues, can result in visual problems or disrupt functionality, ranging from minor glitches to critical site failures. JavaScript errors can terminate JavaScript execution, leaving all subsequent commands inoperable.", "restore-classic-widgets");
                         ?>
                         <a href="https://wptoolsplugin.com/site-language-error-can-crash-your-site/">
                             <?php
-                            echo esc_attr__("Learn More", "easy-update-urls");
+                            echo esc_attr__("Learn More", "restore-classic-widgets");
                             ?>
                         </a>
                     </p>
@@ -1464,7 +1464,7 @@ class easy_update_urls_Bill_Diagnose
                     $bill_folders = $errorChecker->get_path_logs(); // Use -> (flecha)
 
                     echo "<br />";
-                    echo esc_attr__("This is a partial list of the errors found.", "easy-update-urls");
+                    echo esc_attr__("This is a partial list of the errors found.", "restore-classic-widgets");
                     echo "<br />";
                     /**
                      * Obtém o tamanho do arquivo em bytes.
@@ -1476,12 +1476,12 @@ class easy_update_urls_Bill_Diagnose
                     {
                         if (!file_exists($bill_filename) || !is_readable($bill_filename)) {
                             // return "File not readable.";
-                            return esc_attr__("File not readable.", "easy-update-urls");
+                            return esc_attr__("File not readable.", "restore-classic-widgets");
                         }
                         $fileSizeBytes = filesize($bill_filename);
                         if ($fileSizeBytes === false) {
                             //return "Size not determined.";
-                            return esc_attr__("Size not determined.", "easy-update-urls");
+                            return esc_attr__("Size not determined.", "restore-classic-widgets");
                         }
                         return $fileSizeBytes;
                     }
@@ -1495,7 +1495,7 @@ class easy_update_urls_Bill_Diagnose
                     {
                         if (!is_int($sizeBytes) || $sizeBytes < 0) {
                             // Retorna uma mensagem de erro se o tamanho for inválido
-                            return esc_attr__("Invalid size.", "easy-update-urls");
+                            return esc_attr__("Invalid size.", "restore-classic-widgets");
                         }
                         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
                         $unitIndex = 0;
@@ -1528,7 +1528,7 @@ class easy_update_urls_Bill_Diagnose
                                 echo "<strong>";
                                 echo esc_attr($bill_filename);
                                 echo "<br />";
-                                echo esc_attr__("File Size: ", "easy-update-urls");
+                                echo esc_attr__("File Size: ", "restore-classic-widgets");
                                 echo "&nbsp;";
                                 $fileSizeBytes = getFileSizeInBytes($bill_filename);
                                 if (is_int($fileSizeBytes)) {
@@ -1767,7 +1767,7 @@ class easy_update_urls_Bill_Diagnose
                                                 $log_entry = [
                                                     "Date" => $filteredDate,
                                                     "News Type" => $matches[1],
-                                                    "Problem Description" => easy_update_urls_bill_strip_strong99(
+                                                    "Problem Description" => restore_classic_widgets_bill_strip_strong99(
                                                         $matches[2]
                                                     ),
                                                 ];
@@ -1902,11 +1902,11 @@ class easy_update_urls_Bill_Diagnose
                     // Adicione uma guia de ajuda
                     $message = esc_attr__(
                         "These are critical issues that can have a significant impact on your site's performance. They can cause many plugins and functionalities to malfunction and, in some cases, render your site completely inoperative, depending on their severity. Address them promptly.",
-                        "easy-update-urls"
+                        "restore-classic-widgets"
                     );
                     $screen->add_help_tab([
                         "id"      => "custom-help-tab",
-                        "title"   => esc_attr__("Critical Issues", "easy-update-urls"),
+                        "title"   => esc_attr__("Critical Issues", "restore-classic-widgets"),
                         "content" => "<p>" . $message . "</p>",
                     ]);
                 }
@@ -1920,8 +1920,8 @@ $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
 $notification_url2 =
     "https://billplugin.com/site-language-error-can-crash-your-site/";
 */
-        $diagnose_instance = easy_update_urls_Bill_Diagnose::get_instance(
+        $diagnose_instance = restore_classic_widgets_Bill_Diagnose::get_instance(
             $notification_url,
             $notification_url2,
         );
-        update_option("easy_update_urls_bill_show_warnings", date("Y-m-d"));
+        update_option("restore_classic_widgets_bill_show_warnings", date("Y-m-d"));
