@@ -1242,7 +1242,7 @@ class restore_classic_widgets_Bill_Diagnose
                 if ($check_for_bots) {
                     global $wpdb;
 
-                    debug4($check_for_bots);
+                    //debug4($check_for_bots);
 
 
                     $table_name = $wpdb->prefix . 'bill_catch_some_bots';
@@ -1282,7 +1282,7 @@ class restore_classic_widgets_Bill_Diagnose
 
 
 
-                    debug4($rows);
+                    //debug4($rows);
 
                     if (!empty($rows) && count($rows) > 0) {
 

@@ -9,8 +9,8 @@ Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 4.68
-Version: 4.68
+Stable tag: 4.69
+Version: 4.69
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
