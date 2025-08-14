@@ -1,17 +1,18 @@
 === Restore and Enable Classic Widgets No Expiration ===
 
-Plugin Name: Restore Classic Widgets
+Plugin Name: Restore and Enable Classic Widgets No Expiration
 Plugin URI: https://BillMinozzi.com/support/
 Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets.
 Tags: classic widgets, enable classic widgets, oldMiss the old widgets, Miss the old widgets, Appearance Widgets Customizer
 Author: Bill Minozzi
 Author URI: https://BillMinozzi.com/
 Contributors: sminozzi
-Requires at least: 5.4
+Requires at least: 6.2  
+Requires PHP: 5.6.20   
 Tested up to: 6.8
-Stable tag: 4.69
-Version: 4.69
-Requires PHP: 5.6.20
+Stable tag: 4.78
+Version: 4.78
+
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -231,14 +232,33 @@ Compatibility issues arise when themes or plugins aren’t updated to support th
 
 This answer also addresses related questions like: widget settings lost, widgets are disappearing, widget restoration.  missing widgets, widgets have disappeared, widgets no longer appearing, widget area disappeared under Appearance, WordPress Widgets Missing after Migration, Your theme does not support widgets, and ensure compatibility with older themes.
 
-== External service  ==
+
+== External service (1) ==
 When using our chat, only some information about issues, such as your language and data from the Diagnose tab, may be sent to our server. We do not share, publish, or disclose any information with third parties.
+domain: https://BillMinozzi.com/chat/api/api.php
+
+== External service (2) ==
+The plugin will retrieve tips and news from our site BillMinozzi.com. This information will be displayed in the plugin dashboard, in the right-hand column under the title "Tips and News." No data is sent to our server. 
+domain: https://billminozzi.com/API/bill-api.php
+
+
+== Advanced Site Health ==
+
+WordPresss built-in Site Health feature provides a great baseline for your sites well-being. However, in todays digital landscape, true health goes beyond server configuration. A site can have a perfect score and still be slow, vulnerable, or plagued by critical errors.
+
+Our plugin extends the core Site Health concept to provide a truly holistic analysis of what keeps your site fast, stable, and secure. We dont just check the basics; we diagnose critical issues that directly impact your visitors experience and your sites operational integrity.
+
+Our enhanced checks include:Performance & Memory Analysis, Proactive Error Detection, Modern Security Monitoring.
+
+For a complete overview of all features, our data handling practices, and the full terms governing our software, please visit our official website: 
+https://siterightaway.net/terms-of-use-of-our-plugins-and-themes/ 
 
 == Changelog ==
+** 4.78 2025-08-12 - Limited the Diagnostics as requested by WordPress team.
 ** 4.65/66 2025-06-11 - Improvements on chat.
-** 4.64 2025-05-08 - Improvements on catch JSd errors.
-** 4.63 2025-05-04 - Improvements on catch JSd errors.
-** 4.61 2025-04-23 - Improvements on catch JSd errors.
+** 4.64 2025-05-08 - Improvements on catch JS errors.
+** 4.63 2025-05-04 - Improvements on catch JS errors.
+** 4.61 2025-04-23 - Improvements on catch JS errors.
 ** 4.60 2025-03-31 - Many Improvements.
 ** 4.56/57 2025-02-28 - Many Improvements.
 ** 4.55 2025-02-22 - small Improvements.

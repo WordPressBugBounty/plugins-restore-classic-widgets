@@ -1,75 +1,53 @@
-<?php
-namespace restore_classic_widgets_BillInstall;
+<?php // namespace kikokoo {
 if (!defined("ABSPATH")) {
     die('We\'re sorry, but you can not directly access this file.');
 }
-use restore_classic_widgets_BillDiagnose\MemoryChecker;
-use restore_classic_widgets_BillDiagnose\ErrorChecker;
-if (!class_exists('restore_classic_widgets_BillDiagnose\MemoryChecker')) {
+$restore_classic_widgets_debug = false;
+delete_option('restore_classic_widgets_pre_checkup_finished');
+if (function_exists('is_multisite') and is_multisite() and !current_user_can("manage_options")) {
     return;
 }
-if (!function_exists('restore_classic_widgets_install_ajaxurl')) {
-    return;
+$line_number = __LINE__;
+$restore_classic_widgets_finished_install = get_option("restore_classic_widgets_pre_checkup_finished", false);
+if ($restore_classic_widgets_finished_install) {
 }
-$restore_classic_widgets_debug = true;
-if ($restore_classic_widgets_debug)
-    delete_option('restore_classic_widgets_minozzi_pre_checkup_finished');
-if (function_exists('is_multisite') and is_multisite()) {
-    return;
-}
-add_action("wp_head", "restore_classic_widgets_install_ajaxurl");
-$finished_time = get_option("restore_classic_widgets_minozzi_pre_checkup_finished", "0");
-if ($finished_time === '0' || !is_numeric($finished_time)) {
-    $finished_time = gmdate('Y-m-d H:i:s', strtotime('-1 year'));
-}
-if (!empty($finished_time) && !$restore_classic_widgets_debug) {
-    if (is_numeric($finished_time)) {
-        $diff_seconds = time() - $finished_time;
-    } else {
-        $timestamp = strtotime($finished_time);
-        if ($timestamp !== false) {
-            $diff_seconds = time() - $timestamp;
-        } else {
-            $finished_time = gmdate('Y-m-d H:i:s', strtotime('-1 year'));
-            $diff_seconds = time() - $finished_time;
-        }
-    }
-    $three_months_seconds = 86400 * 30 * 3; // 30 days * 3 months * 86400 seconds per day
-    if ($diff_seconds < $three_months_seconds) {
+$line_number = __LINE__;
+$plugin_file = plugin_basename($plugin_slug);
+$plugin_path = WP_PLUGIN_DIR . "/$plugin_file";
+if (file_exists($plugin_path)) {
+    $modification_date = gmdate('Y-m-d', filemtime($plugin_path));
+    if ($modification_date !== gmdate('Y-m-d') and !$restore_classic_widgets_debug)
         return;
-    } else {
-        update_option("restore_classic_widgets_minozzi_pre_checkup_finished", "0");
-    }
 }
+$line_number = __LINE__;
 check_ajax_referer('restore_classic_widgets_chat_reset_messages_nonce', 'security');
 if (!current_user_can('manage_options')) {
     wp_send_json_error('You do not have permission to perform this action.');
     wp_die();
 }
 $current_page = isset($_GET["page"]) ? sanitize_text_field(wp_unslash($_GET["page"])) : "";
-if ($current_page !== "restore_classic_widgets_pre-checkup") {
-    $dismissed_time = get_option("restore_classic_widgets_minozzi_pre_checkup_dismissed", '0');
-    if ($dismissed_time === '0' || !is_numeric($dismissed_time)) {
-        $dismissed_time = time() - 2 * 3600;
-    }
-    $restore_classic_widgets_wait_time = ($restore_classic_widgets_debug) ? 60 : 3600;
-    $diff_seconds = time() - $dismissed_time;
-    if ($diff_seconds < $restore_classic_widgets_wait_time) {
-        if (!$restore_classic_widgets_debug) {
-            return;
-        }
-    } else {
-        update_option("restore_classic_widgets_minozzi_pre_checkup_dismissed", "0");
+$dismissed_time = get_option("restore_classic_widgets_pre_checkup_dismissed", false);
+if (
+    $current_page !== "restore_classic_widgets_pre-checkup" &&
+    !isset($_POST["finished"]) &&
+    !isset($_POST["dismiss"])
+) {
+    if ($restore_classic_widgets_debug)
+        $restore_classic_widgets_wait_time = 60;
+    else
+        $restore_classic_widgets_wait_time = 3600;
+    if ($dismissed_time !== false && time() - $dismissed_time < $restore_classic_widgets_wait_time) {
+        if (!$restore_classic_widgets_debug)
+            return; // Don't show alert if dismissed within the last hour
     }
 }
-class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
+add_action(
+    "wp_ajax_restore_classic_widgets_finished_pre_checkup_handler",
+    "restore_classic_widgets_finished_pre_checkup_handler"
+);
+$line_number = __LINE__;
+class restore_classic_widgets_Class_Plugins_Install
 {
-    public $plugin_slug;
-    public $notification_url;
-    public $notification_url2;
-    public $plugin_text_domain;
-    public $logo;
-    public $plugin_adm_url;
     public function __construct(
         $plugin_slug,
         $notification_url,
@@ -87,29 +65,30 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
         register_activation_hook(__FILE__, [$this, "plugin_activation"]);
         add_action("admin_menu", [$this, "add_pre_checkup_page"]);
         add_action("admin_init", [$this, "check_pre_checkup_status"]);
-        add_action("admin_enqueue_scripts", [$this, "enqueue_restore_classic_widget_style_and_scripts"]);
+        add_action("admin_enqueue_scripts", [$this, "enqueue_custom_style_and_scripts"]);
     }
-    public function enqueue_restore_classic_widget_style_and_scripts()
+    public function enqueue_custom_style_and_scripts()
     {
+        $line_number = __LINE__;
         wp_enqueue_style(
             "restore-classic-widget-style",
             plugin_dir_url(__FILE__) . "/class_install_styles.css",
-            array(), // Dependencies (empty array if none)
+            array(),             // Dependencies (empty array if none)
             RESTORE_CLASSIC_WIDGETSVERSION // Use your plugin's version constant for cache busting
         );
         wp_enqueue_script(
             "bill-install-script",
             plugin_dir_url(__FILE__) . "/bill-install-script.js",
-            [],
-            RESTORE_CLASSIC_WIDGETSVERSION, // Using the RESTORE_CLASSIC_WIDGETSVERSION constant for the script version
-            true // true para carregar no footer
+            ['jquery'],          // Correctly specify jQuery as a dependency
+            RESTORE_CLASSIC_WIDGETSVERSION, // Use your plugin's version constant for cache busting
+            true                 // Load in the footer
         );
         wp_localize_script(
-            "bill-install-script",
-            "restore_classic_widgets_install_ajaxurl",
-            [
-                "ajaxurl" => esc_attr(admin_url("admin-ajax.php"))
-            ]
+            'bill-install-script', // Handle do script ao qual você quer anexar a variável
+            'billInstallAjax',     // Nome do objeto JavaScript que será criado (ex: billInstallAjax.ajaxurl)
+            array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+            )
         );
     }
     public function plugin_activation()
@@ -132,11 +111,11 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
 ?>
         <div class="notice notice-warning is-dismissible bill-installation-msg">
             <?php $msg = "<p></p><big>" .
-                "The installation of the " . $slug . " plugin is incomplete.";
-            echo "<p>" . wp_kses_post($msg) . "</p>" ?>
-            <a href="<?php echo esc_url("?page=restore_classic_widgets_pre-checkup"); ?>">Resume Installation.</a>
-            or
-            <a href="#" class="bill-dismiss-one-hour">Remember me Later.</a>
+                "The installation of the " . $slug . " plugin is incomplete."; ?>
+            <p> <?php echo esc_html($msg); ?>
+                <a href="<?php echo esc_url("?page=restore_classic_widgets_pre-checkup"); ?>">Resume Installation.</a>
+                or
+                <a href="#" class="bill-dismiss-one-hour">Remember me Later.</a>
             </p>
             <?php wp_nonce_field('restore_classic_widgets_install_2', 'nonce'); ?>
             <input type="hidden" id="data-admin-url-msg" value="<?php echo esc_url($this->plugin_adm_url); ?>">
@@ -151,7 +130,7 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
             wp_send_json_error('You do not have permission to perform this action.');
             wp_die();
         }
-        $step = isset($_GET["step"]) ? intval(sanitize_text_field(wp_unslash($_GET["step"]))) : 0;
+        $step = isset($_GET["step"]) ? intval($_GET["step"]) : 0;
         if (!empty($this->logo)) {
             echo '<div id="bill-install-logo">';
             echo '<img src="' . esc_attr($this->logo) . '" width="250">';
@@ -161,19 +140,16 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
         switch ($step) {
             case 1: ?>
                 <div class="restore_classic_widgets_install_wrap">
-                    <h2><?php echo esc_attr($this->plugin_slug); ?> &nbsp;Step 1 of 3</h2>
+                    <h2><?php echo esc_html($this->plugin_slug); ?> &nbsp;Step 1 of 3</h2>
                     <p><strong>Server Memory Overview</strong></p>
                     <?php
-                    $diagnose_instance = new restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install(
+                    $diagnose_instance = new restore_classic_widgets_Class_Diagnose(
                         $this->notification_url,
                         $this->notification_url2,
                         'restore-classic-widgets',
-                        $this->plugin_slug,
-                        $this->logo,
-                        $this->plugin_adm_url
+                        $this->plugin_slug
                     );
-                    $memoryChecker = new MemoryChecker(); //
-                    $data = $memoryChecker->check_memory();
+                    $data = $diagnose_instance->check_memory();
                     if (is_array($data)) {
                         if (array_key_exists("msg_type", $data)) {
                             if ($data["msg_type"] == "notok")
@@ -190,17 +166,17 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
                             echo "Percentage of used memory: " .
                                 number_format($data["percent"] * 100, 0) .
                                 "%<br>";
-                            echo "Free memory: " . esc_attr($data["free"]) . "MB<br>";
+                            echo "Free memory: " . esc_html($data["free"]) . "MB<br>";
                         }
                         if (array_key_exists("usage", $data)) {
-                            echo "Memory Usage: " . esc_attr($data["usage"]) . "MB<br>";
+                            echo "Memory Usage: " . esc_html($data["usage"]) . "MB<br>";
                         }
                         if (array_key_exists("limit", $data)) {
-                            echo "PHP Memory Limit: " . esc_attr($data["limit"]) . "MB<br>";
+                            echo "PHP Memory Limit: " . esc_html($data["limit"]) . "MB<br>";
                         }
                         if (array_key_exists("wp_limit", $data)) {
                             echo "WordPress Memory Limit: " .
-                                esc_attr($data["wp_limit"]) .
+                                esc_html($data["wp_limit"]) .
                                 "MB<br>";
                         }
                         echo "<br /><strong>" . "Status: " . "</strong>";
@@ -263,19 +239,16 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
             <?php break;
             case 2: ?>
                 <div class="restore_classic_widgets_install_wrap">
-                    <h2><?php echo esc_attr($this->plugin_slug); ?> &nbsp;Step 2 of 3 </h2>
+                    <h2><?php echo esc_html($this->plugin_slug); ?> &nbsp;Step 2 of 3 </h2>
                     <p><strong>Server Errors and Warnings</strong></p>
                     <?php
-                    $diagnose_instance = new restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install(
+                    $diagnose_instance = new restore_classic_widgets_Class_Diagnose(
                         $this->notification_url,
                         $this->notification_url2,
                         'restore-classic-widgets',
-                        $this->plugin_slug,
-                        $this->logo,
-                        $this->plugin_adm_url
+                        $this->plugin_slug
                     );
-                    $errorChecker = new ErrorChecker(); //
-                    $errors_result  = $errorChecker->restore_classic_widgets_check_errors_today(2);
+                    $errors_result = $diagnose_instance->restore_classic_widgets_check_errors_today();
                     if ($errors_result) {
                         echo '<p style="color: red;">';
                         echo "Errors or warnings have been found in your server's error log for the last 48 hours. We recommend examining these errors and addressing them immediately to avoid potential issues, ensuring greater stability for your site.";
@@ -339,7 +312,7 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
                         <img src="/wp-admin/images/wpspin_light-2x.gif" id="billimagewaitfbl" style="display:none;margin-left:0px;margin-top:0px;" />
                         <br />
                     </div>
-                    <h2><?php echo esc_attr($this->plugin_slug); ?> &nbsp;Step 3/3 (Final)</h2>
+                    <h2><?php echo esc_html($this->plugin_slug); ?> &nbsp;Step 3/3 (Final)</h2>
                     <p><strong>Server Security and Performance</strong></p>
                     <p>
                         Our first plugin was launched over 10 years ago,
@@ -363,15 +336,15 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
                     </div>
                     <hr>
                     <?php
-                    $plugin = new \restore_classic_widgets_restore_classic_widgets_show_more_plugins();
-                    $plugin->restore_classic_widgets_show_plugins();
+                    $plugin_displayer = new class_restore_classic_widgets_show_plugins();
+                    $plugin_displayer->restore_classic_widgets_show_plugins();
                     ?>
                 </div>
             <?php break;
             default: // Conteúdo padrão para outros passos ou quando 'step' não está definido // Adicione casos para outros passos conforme necessário
             ?>
                 <div class="restore_classic_widgets_install_wrap">
-                    <h2><?php echo esc_attr($this->plugin_slug); ?> &nbsp;Welcome</h2>
+                    <h2><?php echo esc_html($this->plugin_slug); ?> &nbsp;Welcome</h2>
                     <p>
                         This installer will guide you to ensure that our plugin is perfectly installed and that your <strong>server environment allows its proper functioning </strong>.
                         By proceeding, you agree that you have read and understood the
@@ -419,7 +392,7 @@ class restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install
     }
 } // end class
 $plugin_file = plugin_basename(__FILE__);
-$plugin_install = new restore_classic_widgets_restore_classic_widgets_Class_Plugins_Install(
+$plugin_install = new restore_classic_widgets_Class_Plugins_Install(
     $plugin_slug,
     $notification_url,
     $notification_url2,
@@ -427,27 +400,14 @@ $plugin_install = new restore_classic_widgets_restore_classic_widgets_Class_Plug
     $logo,
     $plugin_adm_url
 );
-if (!function_exists('restore_classic_widgets_dismiss_pre_checkup_handler')) {
-    function restore_classic_widgets_dismiss_pre_checkup_handler()
-    {
-        if (!isset($_POST['nonce'])) { // Added braces for clarity and consistency
-            wp_die('Invalid nonce (1).');
-        }
-        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'restore_classic_widgets_install') && !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'restore_classic_widgets_install_2')) {
-            wp_die('Invalid nonce (2).');
-        }
-        update_option("restore_classic_widgets_minozzi_pre_checkup_dismissed", time());
-        wp_die('OK!!!!'); // Exit after sending JSON response
-    }
-}
 if (!function_exists('restore_classic_widgets_finished_pre_checkup_handler')) {
     function restore_classic_widgets_finished_pre_checkup_handler()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'restore_classic_widgets_install')) {
+        $nonce = isset($_POST['nonce']) ?     sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+        if (!wp_verify_nonce($nonce, 'restore_classic_widgets_install')) {
             wp_die('Invalid nonce.');
         }
-        update_option("restore_classic_widgets_minozzi_pre_checkup_finished", time());
-        $finished_time = get_option("restore_classic_widgets_minozzi_pre_checkup_finished", "0");
+        update_option("restore_classic_widgets_pre_checkup_finished", time());
         wp_die("OK");
     }
 }
@@ -534,8 +494,8 @@ if (!class_exists('class_restore_classic_widgets_show_plugins')) {
             $plugins_to_install[10]["Description"] =
                 "The Hide Site Title Remover plugin allows you to easily remove titles from your WordPress posts and pages, without affecting menus or titles in the admin area.";
             $plugins_to_install[10]["image"] =
-                "https://ps.w.org/restore_classic_widgets/assets/icon-256x256.gif?rev=2862487";
-            $plugins_to_install[10]["slug"] = "restore_classic_widgets";
+                "https://ps.w.org/hide-site-title/assets/icon-256x256.gif?rev=2862487";
+            $plugins_to_install[10]["slug"] = "hide-site-title";
             $plugins_to_install[11]["Name"] = "Disable WordPress Sitemap";
             $plugins_to_install[11]["Description"] =
                 "The sitemap is automatically created by WordPress from version 5.5. This plugin offers you the option to disable it, allowing you to use another SEO plugin to generate it if desired.";
@@ -601,9 +561,3 @@ if (!class_exists('class_restore_classic_widgets_show_plugins')) {
     } // end class
 } //end if class exists...
 $plugin_displayer = new class_restore_classic_widgets_show_plugins();
-function restore_classic_widgets_dismiss_pre_checkup_handler2()
-{
-    wp_die('OK!!');
-}
-add_action('wp_ajax_restore_classic_widgets_dismiss_pre_checkup_handler', __NAMESPACE__ . '\\restore_classic_widgets_dismiss_pre_checkup_handler');
-add_action('wp_ajax_restore_classic_widgets_finished_pre_checkup_handler', __NAMESPACE__ . '\\restore_classic_widgets_finished_pre_checkup_handler');
