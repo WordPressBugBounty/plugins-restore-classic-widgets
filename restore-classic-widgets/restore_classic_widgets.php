@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore and Enable Classic Widgets No Expiration
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.78
+Version: 4.79
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -88,17 +88,20 @@ function restore_classic_widget_row_meta($links, $file)
 }
 function restore_classic_widgets_load_chat()
 {
-    global $restore_classic_widgets_is_admin;
-    if ($restore_classic_widgets_is_admin and current_user_can("manage_options")) {
+    if (current_user_can("manage_options")) {
+        require_once(RESTORE_CLASSIC_WIDGETSPATH . 'functions/function_sysinfo.php');
         if (!class_exists('restore_classic_widgets_BillChat\ChatPlugin')) {
-            require_once dirname(__FILE__) . "/includes/chat/class_restore_classic_widgets_chat.php";
+            require_once dirname(__FILE__) . "/includes/chat/class_bill_chat.php";
         }
     }
 }
+add_action('init', 'restore_classic_widgets_load_chat');
+
+
 function restore_classic_widgets_restore_classic_widgets_hooking_diagnose()
 {
-    global $restore_classic_widgets_is_admin;
-    if ($restore_classic_widgets_is_admin and current_user_can("manage_options")) {
+    if (current_user_can("manage_options")) {
+        require_once(RESTORE_CLASSIC_WIDGETSPATH . 'functions/function_sysinfo.php');
         $declared_classes = get_declared_classes();
         foreach ($declared_classes as $class_name) {
             if (strpos($class_name, "restore_classic_widgets_Diagnose") !== false) {
@@ -110,9 +113,12 @@ function restore_classic_widgets_restore_classic_widgets_hooking_diagnose()
         $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
         $notification_url2 =
             "https://wptoolsplugin.com/site-language-error-can-crash-your-site/";
-        require_once dirname(__FILE__) . "/includes/diagnose/class_restore_classic_widgets_diagnose.php";
+        require_once dirname(__FILE__) . "/includes/diagnose/class_bill_diagnose.php";
     }
 }
+add_action('init', 'restore_classic_widgets_restore_classic_widgets_hooking_diagnose');
+
+
 function restore_classic_widgets_restore_classic_widgets_hooking_catch_errors()
 {
     global $restore_classic_widgets_plugin_slug;
@@ -153,3 +159,4 @@ function restore_classic_widgets_restore_classic_widgets_install()
         require_once dirname(__FILE__) . "/includes/install-checkup/class_restore_classic_widgets_install.php";
     }
 }
+//

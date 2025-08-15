@@ -54,16 +54,6 @@ jQuery(document).ready(function ($) {
     return $("<div>").text(text).html();
   }
 
-  /*
-     $.ajax({
-         url: restore_classic_widgets_data.ajax_url,
-         method: 'POST',
-         data: { action: 'restore_classic_widgets_chat_reset_messages' },
-         success: function () { },
-         error: function (xhr, status, error) { console.error(restore_classic_widgets_data.reset_error, error, xhr.responseText); }
-     });
-     */
-
   $.ajax({
     url: restore_classic_widgets_data.ajax_url,
     type: "POST",
@@ -71,7 +61,7 @@ jQuery(document).ready(function ($) {
       action: "restore_classic_widgets_chat_reset_messages",
       security: restore_classic_widgets_data.reset_nonce, // Enviar o nonce
     },
-    success: function () {},
+    success: function () { },
     error: function (xhr, status, error) {
       console.error(
         restore_classic_widgets_data.reset_error,
@@ -87,6 +77,7 @@ jQuery(document).ready(function ($) {
       method: "POST",
       data: {
         action: "restore_classic_widgets_chat_load_messages",
+        security: restore_classic_widgets_data.reset_nonce, // <-- CORRIGIDO
         last_count: billChatLastMessageCount,
       },
       success: function (response, status, xhr) {
@@ -102,8 +93,8 @@ jQuery(document).ready(function ($) {
                   if (message.sender === "user") {
                     billChatMessages.append(
                       '<div class="user-message">' +
-                        billChatEscapeHtml(message.text) +
-                        "</div>"
+                      billChatEscapeHtml(message.text) +
+                      "</div>"
                     );
                   } else if (message.sender === "chatgpt") {
                     let processedText = billChatEscapeHtml(message.text);
@@ -164,8 +155,8 @@ jQuery(document).ready(function ($) {
       clickedButtonId === "auto-checkup" || clickedButtonId === "auto-checkup2"
         ? clickedButtonId
         : $("#chat-type").length
-        ? $("#chat-type").val()
-        : "default";
+          ? $("#chat-type").val()
+          : "default";
 
     if (
       chatType === "auto-checkup" ||
@@ -181,6 +172,7 @@ jQuery(document).ready(function ($) {
         method: "POST",
         data: {
           action: "restore_classic_widgets_chat_send_message",
+          security: restore_classic_widgets_data.reset_nonce, // <-- CORRIGIDO
           message: message,
           chat_type: chatType,
           chat_version: chatVersion,

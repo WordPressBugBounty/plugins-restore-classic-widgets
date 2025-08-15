@@ -1,5 +1,7 @@
 <?php
+
 namespace restore_classic_widgets_BillDiagnose;
+
 if (!defined('ABSPATH')) {
     die('Invalid request.');
 }
@@ -149,17 +151,17 @@ class ErrorChecker
         }
         $restore_classic_widgets_folders[] = $error_log_path;
         $restore_classic_widgets_folders[] = WP_CONTENT_DIR . "/debug.log";
-        $restore_classic_widgets_folders[] = restore_classic_widgets_dir_path(__FILE__) . "error_log";
-        $restore_classic_widgets_folders[] = restore_classic_widgets_dir_path(__FILE__) . "php_errorlog";
+        $restore_classic_widgets_folders[] = plugin_dir_path(__FILE__) . "error_log";
+        $restore_classic_widgets_folders[] = plugin_dir_path(__FILE__) . "php_errorlog";
         $restore_classic_widgets_folders[] = get_theme_root() . "/error_log";
         $restore_classic_widgets_folders[] = get_theme_root() . "/php_errorlog";
         $restore_classic_widgets_admin_path = str_replace(get_bloginfo("url") . "/", ABSPATH, get_admin_url());
         $restore_classic_widgets_folders[] = $restore_classic_widgets_admin_path . "/error_log";
         $restore_classic_widgets_folders[] = $restore_classic_widgets_admin_path . "/php_errorlog";
         try {
-            $restore_classic_widgets_plugins = array_slice(scandir(restore_classic_widgets_dir_path(__FILE__)), 2);
+            $restore_classic_widgets_plugins = array_slice(scandir(plugin_dir_path(__FILE__)), 2);
             foreach ($restore_classic_widgets_plugins as $restore_classic_widgets_plugin) {
-                $plugin_path = restore_classic_widgets_dir_path(__FILE__) . $restore_classic_widgets_plugin;
+                $plugin_path = plugin_dir_path(__FILE__) . $restore_classic_widgets_plugin;
                 if (is_dir($plugin_path)) {
                     $restore_classic_widgets_folders[] = $plugin_path . "/error_log";
                     $restore_classic_widgets_folders[] = $plugin_path . "/php_errorlog";
@@ -370,7 +372,7 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
     }
     public function get_plugin_slug()
     {
-        $plugin_dir = restore_classic_widgets_dir_path(__FILE__);
+        $plugin_dir = plugin_dir_path(__FILE__);
         function get_base_plugin_dir($dir, $base_dir)
         {
             $relative_path = str_replace($base_dir, '', $dir);
@@ -379,8 +381,7 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
         }
         if (strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
             $plugin_slug = get_base_plugin_dir($plugin_dir, WP_PLUGIN_DIR);
-        }
-        elseif (defined('WPMU_PLUGIN_DIR') && strpos($plugin_dir, WPMU_PLUGIN_DIR) === 0) {
+        } elseif (defined('WPMU_PLUGIN_DIR') && strpos($plugin_dir, WPMU_PLUGIN_DIR) === 0) {
             $plugin_slug = get_base_plugin_dir($plugin_dir, WPMU_PLUGIN_DIR);
         } else {
             return '';
@@ -576,6 +577,7 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
                     ?>
                 </div>
                 <?php
+                /*
                 function wptools_check_page_load()
                 {
                     global $wpdb;
@@ -583,11 +585,11 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
                     if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) != $table_name) {
                         $charset_collate = $wpdb->get_charset_collate();
                         $sql = "CREATE TABLE $table_name (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            page_url VARCHAR(255) NOT NULL,
-            load_time FLOAT NOT NULL,
-            timestamp DATETIME NOT NULL
-            ) $charset_collate;";
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        page_url VARCHAR(255) NOT NULL,
+                        load_time FLOAT NOT NULL,
+                        timestamp DATETIME NOT NULL
+                        ) $charset_collate;";
                         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                         dbDelta($sql);
                     }
@@ -596,11 +598,11 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
                     $results9 = $wpdb->get_results(
                         $wpdb->prepare(
                             "SELECT DATE(timestamp) AS date, AVG(load_time) AS average_load_time
-         FROM %i
-         WHERE timestamp >= CURDATE() - INTERVAL 6 DAY
-         AND NOT page_url LIKE %s
-         GROUP BY DATE(timestamp)
-         ORDER BY date",
+                        FROM %i
+                        WHERE timestamp >= CURDATE() - INTERVAL 6 DAY
+                        AND NOT page_url LIKE %s
+                        GROUP BY DATE(timestamp)
+                        ORDER BY date",
                             $table_name, // %i for the table name
                             '%wp-admin%' // %s for string
                         ),
@@ -663,6 +665,7 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
                     echo '</div>';
                     echo '</div>'; // end accordion
                 }
+                */
                 $updates = get_plugin_updates();
                 $muplugins = get_mu_plugins();
                 $plugins = get_plugins();
@@ -1041,25 +1044,25 @@ class restore_classic_widgets_restore_classic_widgets_Diagnose
                                                     $script_info["dirname"]; // Get the script location
                                                 if ($log_entry["Script Location"] == 'http:' or $log_entry["Script Location"] == 'https:')
                                                     $log_entry["Script Location"] = $matches[3];
-                                        $plugins_url_base = plugins_url(); // Retorna a URL da pasta de plugins, ex: https://site.com/wp-content/plugins
-                                        $themes_url_base = get_theme_root_uri(); // Retorna a URL da pasta de temas, ex: https://site.com/wp-content/themes
-                                        if (strpos($log_entry["Script URL"], $plugins_url_base) !== false) {
-                                            $relative_path = str_replace($plugins_url_base, '', $log_entry["Script URL"]);
-                                            $relative_path_clean = ltrim($relative_path, '/');
-                                            $plugin_parts = explode('/', $relative_path_clean);
-                                            if (!empty($plugin_parts[0])) {
-                                                $log_entry["File Type"] = "Plugin";
-                                                $log_entry["Plugin Name"] = $plugin_parts[0];
-                                            }
-                                        } elseif (strpos($log_entry["Script URL"], $themes_url_base) !== false) {
-                                            $relative_path = str_replace($themes_url_base, '', $log_entry["Script URL"]);
-                                            $relative_path_clean = ltrim($relative_path, '/');
-                                            $theme_parts = explode('/', $relative_path_clean);
-                                            if (!empty($theme_parts[0])) {
-                                                $log_entry["File Type"] = "Theme";
-                                                $log_entry["Theme Name"] = $theme_parts[0];
-                                            }
-                                         } else {
+                                                $plugins_url_base = plugins_url(); // Retorna a URL da pasta de plugins, ex: https://site.com/wp-content/plugins
+                                                $themes_url_base = get_theme_root_uri(); // Retorna a URL da pasta de temas, ex: https://site.com/wp-content/themes
+                                                if (strpos($log_entry["Script URL"], $plugins_url_base) !== false) {
+                                                    $relative_path = str_replace($plugins_url_base, '', $log_entry["Script URL"]);
+                                                    $relative_path_clean = ltrim($relative_path, '/');
+                                                    $plugin_parts = explode('/', $relative_path_clean);
+                                                    if (!empty($plugin_parts[0])) {
+                                                        $log_entry["File Type"] = "Plugin";
+                                                        $log_entry["Plugin Name"] = $plugin_parts[0];
+                                                    }
+                                                } elseif (strpos($log_entry["Script URL"], $themes_url_base) !== false) {
+                                                    $relative_path = str_replace($themes_url_base, '', $log_entry["Script URL"]);
+                                                    $relative_path_clean = ltrim($relative_path, '/');
+                                                    $theme_parts = explode('/', $relative_path_clean);
+                                                    if (!empty($theme_parts[0])) {
+                                                        $log_entry["File Type"] = "Theme";
+                                                        $log_entry["Theme Name"] = $theme_parts[0];
+                                                    }
+                                                } else {
                                                 }
                                                 $script_name = basename(
                                                     wp_parse_url(

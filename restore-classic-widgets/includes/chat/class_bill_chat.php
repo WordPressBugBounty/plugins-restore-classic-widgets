@@ -1,5 +1,7 @@
 <?php
+
 namespace restore_classic_widgets_BillChat;
+
 if (!defined('ABSPATH')) {
     die('Invalid request.');
 }
@@ -142,8 +144,16 @@ class ChatPlugin
     }
     public function restore_classic_widgets_chat_call_chatgpt_api($data, $chatType, $chatVersion)
     {
+
+
+
         $restore_classic_widgets_chat_erros = '';
         try {
+
+
+
+
+
             function filter_log_content($content)
             {
                 if (is_array($content)) {
@@ -155,8 +165,18 @@ class ChatPlugin
                     return $content;
                 }
             }
+
+
+
             $restore_classic_widgets_folders = ChatPlugin::get_path_logs();
+
+
+
             $log_type = "PHP Error Log";
+
+
+
+
             $restore_classic_widgets_chat_erros = "Log ($log_type) not found or not readable.";
             foreach ($restore_classic_widgets_folders as $restore_classic_widgets_folder) {
                 if (!file_exists($restore_classic_widgets_folder) && !is_readable($restore_classic_widgets_folder)) {
@@ -173,14 +193,28 @@ class ChatPlugin
         } catch (Exception $e) {
             $restore_classic_widgets_chat_erros = "An error occurred to read error logs: " . $e->getMessage();
         }
+
+
+
+
         $plugin_path = plugin_basename(__FILE__); // Retorna algo como "plugin-folder/plugin-file.php"
         $language = get_locale();
         $plugin_slug = explode('/', $plugin_path)[0]; // Pega apenas o primeiro diretório (a raiz)
         $domain = wp_parse_url(home_url(), PHP_URL_HOST);
+
+
+
         if (empty($restore_classic_widgets_chat_erros)) {
             $restore_classic_widgets_chat_erros = 'No errors found!';
         }
+
+
         $restore_classic_widgets_checkup = \restore_classic_widgets_sysinfo_get();
+
+
+
+
+
         $data2 = [
             'param1' => $data,
             'param2' => $restore_classic_widgets_checkup,
@@ -191,6 +225,9 @@ class ChatPlugin
             'param7' => $chatType,
             'param8' => $chatVersion,
         ];
+
+
+
         $response = wp_remote_post('https://BillMinozzi.com/chat/api/api.php', [
             'timeout' => 60,
             'headers' => [
@@ -198,6 +235,11 @@ class ChatPlugin
             ],
             'body' => json_encode($data2),
         ]);
+
+
+
+
+
         if (is_wp_error($response)) {
             $error_message = sanitize_text_field($response->get_error_message());
         } else {
@@ -211,6 +253,7 @@ class ChatPlugin
         }
         return $message;
     }
+    // CÓDIGO CORRIGIDO PARA get_path_logs()
     public static function get_path_logs()
     {
         $restore_classic_widgets_folders = [];
@@ -226,23 +269,25 @@ class ChatPlugin
         }
         $restore_classic_widgets_folders[] = $error_log_path;
         $restore_classic_widgets_folders[] = WP_CONTENT_DIR . "/debug.log";
-        $restore_classic_widgets_folders[] = restore_classic_widgets_dir_path(__FILE__) . "error_log";
-        $restore_classic_widgets_folders[] = restore_classic_widgets_dir_path(__FILE__) . "php_errorlog";
+        // CORREÇÃO AQUI
+        $restore_classic_widgets_folders[] = plugin_dir_path(__FILE__) . "error_log";
+        $restore_classic_widgets_folders[] = plugin_dir_path(__FILE__) . "php_errorlog";
         $restore_classic_widgets_folders[] = get_theme_root() . "/error_log";
         $restore_classic_widgets_folders[] = get_theme_root() . "/php_errorlog";
         $restore_classic_widgets_admin_path = str_replace(get_bloginfo("url") . "/", ABSPATH, get_admin_url());
         $restore_classic_widgets_folders[] = $restore_classic_widgets_admin_path . "/error_log";
         $restore_classic_widgets_folders[] = $restore_classic_widgets_admin_path . "/php_errorlog";
         try {
-            $restore_classic_widgets_plugins = array_slice(scandir(restore_classic_widgets_dir_path(__FILE__)), 2);
+            // E CORREÇÃO AQUI
+            $restore_classic_widgets_plugins = array_slice(scandir(plugin_dir_path(__FILE__)), 2);
             foreach ($restore_classic_widgets_plugins as $restore_classic_widgets_plugin) {
-                $plugin_path = restore_classic_widgets_dir_path(__FILE__) . $restore_classic_widgets_plugin;
+                $plugin_path = plugin_dir_path(__FILE__) . $restore_classic_widgets_plugin;
                 if (is_dir($plugin_path)) {
                     $restore_classic_widgets_folders[] = $plugin_path . "/error_log";
                     $restore_classic_widgets_folders[] = $plugin_path . "/php_errorlog";
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) { // Adicionado \ para Exception no namespace global
         }
         try {
             $restore_classic_widgets_themes = array_slice(scandir(get_theme_root()), 2);
@@ -252,12 +297,17 @@ class ChatPlugin
                     $restore_classic_widgets_folders[] = get_theme_root() . "/" . $restore_classic_widgets_theme . "/php_errorlog";
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) { // Adicionado \ para Exception no namespace global
         }
-        return $restore_classic_widgets_folders;
+        return array_unique($restore_classic_widgets_folders);
     }
     public function restore_classic_widgets_chat_send_message()
     {
+
+
+        // wp_send_json_success(['message' => 'Chat messages have been reset successfully.']);
+
+
         check_ajax_referer('restore_classic_widgets_chat_reset_messages_nonce', 'security');
         if (!current_user_can('manage_options')) {
             wp_send_json_error('You do not have permission to perform this action.');
