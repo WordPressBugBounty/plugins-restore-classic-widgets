@@ -1,5 +1,7 @@
 <?php
+// catch javascript errors
 namespace restore_classic_widgets_BillCatchErrors;
+
 if (!defined("ABSPATH")) {
     die("Invalid request.");
 }
@@ -93,12 +95,13 @@ class restore_classic_widgets_restore_classic_widgets_catch_errors
     public function enqueue_error_catcher_script()
     {
         $script_handle = 'bill-error-catcher';
+
         wp_register_script(
             $script_handle,
-            plugin_dir_url(__FILE__) . 'assets/js/bill-catch-errors.js', // Caminho para o arquivo JS
-            [], // Dependências (nenhuma neste caso)
-            '1.0.0', // Versão do seu script
-            true // Carregar no rodapé (melhor para performance)
+            plugin_dir_url(__FILE__) . 'catch_errors.js',
+            [],
+            '1.0.0',
+            true
         );
         $nonce = wp_create_nonce("bill-catch-js-errors");
         $ajax_url = admin_url("admin-ajax.php");

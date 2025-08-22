@@ -10,8 +10,8 @@ Contributors: sminozzi
 Requires at least: 6.2  
 Requires PHP: 5.6.20   
 Tested up to: 6.8
-Stable tag: 4.79
-Version: 4.79
+Stable tag: 4.81
+Version: 4.81
 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -254,6 +254,7 @@ For a complete overview of all features, our data handling practices, and the fu
 https://siterightaway.net/terms-of-use-of-our-plugins-and-themes/ 
 
 == Changelog ==
+** 4.81 2025-08-22 - Small Improvements.
 ** 4.79 2025-08-15 - Small Improvements.
 ** 4.78 2025-08-12 - Limited the Diagnostics as requested by WordPress team.
 ** 4.65/66 2025-06-11 - Improvements on chat.

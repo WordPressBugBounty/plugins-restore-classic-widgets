@@ -1,6 +1,7 @@
-jQuery(document).ready(function ($) {
+// catch javascript errors
+(function () {
   var errorQueue = [];
-  let restore_classic_widgets_timeout;
+  var restore_classic_widgets_timeout;
   var errorMessage = "";
 
   function isBot() {
@@ -21,6 +22,8 @@ jQuery(document).ready(function ($) {
     return bots.some((bot) => userAgent.includes(bot));
   }
 
+  // Listener para erros padrão de JavaScript.
+  // Ele começa a "ouvir" assim que o script é carregado.
   window.addEventListener("error", function (event) {
     var msg = event.message;
     if (msg === "Script error.") {
@@ -40,6 +43,7 @@ jQuery(document).ready(function ($) {
     handleErrorQueue();
   });
 
+  // Listener para erros modernos de Promises (ex: async/await).
   window.addEventListener("unhandledrejection", function (event) {
     errorMessage = "Promise Rejection: " + (event.reason || "Unknown reason");
     if (isBot()) {
@@ -63,8 +67,6 @@ jQuery(document).ready(function ($) {
       var message = errorQueue.join(" | ");
       var xhr = new XMLHttpRequest();
 
-      // Usamos os dados passados pelo wp_localize_script.
-      // Certifique-se de que o objeto 'restore_classic_widgets_error_data' existe.
       if (typeof restore_classic_widgets_error_data === "undefined") {
         console.error(
           "restore_classic_widgets_error_data is not defined. Was wp_localize_script used correctly?"
@@ -100,4 +102,4 @@ jQuery(document).ready(function ($) {
   }
 
   window.addEventListener("beforeunload", sendErrorsToServer);
-});
+})(); // A IIFE é fechada e executada aqui.

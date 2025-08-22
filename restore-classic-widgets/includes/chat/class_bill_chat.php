@@ -77,7 +77,7 @@ class ChatPlugin
         ]);
         wp_die();
     }
-    public function restore_classic_widgets_read_file($file, $lines)
+    public function restore_classic_widgets_read_file_old($file, $lines)
     {
         clearstatcache(true, $file); // Clear cache to ensure current file state
         if (!file_exists($file) || !is_readable($file)) {
@@ -141,6 +141,47 @@ class ChatPlugin
             return $text;
         }
         return $text;
+    }
+    public function restore_classic_widgets_read_file($file, $lines)
+    {
+        // Limpa o cache para garantir que estamos lendo o estado atual do arquivo
+        clearstatcache(true, $file);
+
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . '/wp-admin/includes/file.php';
+            if (!WP_Filesystem()) {
+                // Adicione um log de erro ou retorno se o WP_Filesystem não puder ser inicializado
+                error_log('WP_Filesystem could not be initialized in restore_classic_widgets_read_file.');
+                return [];
+            }
+        }
+
+        if (!$wp_filesystem->exists($file) || !$wp_filesystem->is_readable($file)) {
+            return [];
+        }
+
+        $content = $wp_filesystem->get_contents($file);
+        if ($content === false || $content === '') {
+            return [];
+        }
+
+        // Divide o conteúdo em linhas, funcionando para diferentes quebras de linha (Windows, Linux, Mac)
+        $all_lines = preg_split('/\r\n|\r|\n/', $content);
+
+        // Remove a última linha se estiver vazia (comum em arquivos de log)
+        if (end($all_lines) === '') {
+            array_pop($all_lines);
+        }
+
+        // Pega as últimas N linhas do array de linhas
+        if (count($all_lines) > $lines) {
+            $last_lines = array_slice($all_lines, -$lines);
+        } else {
+            $last_lines = $all_lines;
+        }
+
+        return $last_lines;
     }
     public function restore_classic_widgets_chat_call_chatgpt_api($data, $chatType, $chatVersion)
     {

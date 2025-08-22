@@ -2,7 +2,7 @@
 /*
 Plugin Name: Restore and Enable Classic Widgets No Expiration
 Description: Description: Restore and enable the previous classic widgets settings screens and disables the Gutenberg block editor from managing widgets. No expiration date.
-Version: 4.79
+Version: 4.81
 Text Domain: restore-classic-widgets
 Domain Path: /language
 Author: Bill Minozzi
@@ -51,6 +51,7 @@ function restore_classic_widgets_add_admstylesheet()
     $wpmemory_jqueryurl = RESTORE_CLASSIC_WIDGETSURL . 'assets/css/jquery-ui.css';
     wp_register_style('bill-jquery-ui', $wpmemory_jqueryurl, array(), '1.12.1', 'all');
     wp_enqueue_style('bill-jquery-ui');
+    wp_enqueue_script('jquery-migrate');
 }
 add_action('admin_enqueue_scripts', 'restore_classic_widgets_add_admstylesheet');
 if ($restore_classic_widgets_is_admin) {
@@ -103,11 +104,33 @@ function restore_classic_widgets_restore_classic_widgets_hooking_diagnose()
     if (current_user_can("manage_options")) {
         require_once(RESTORE_CLASSIC_WIDGETSPATH . 'functions/function_sysinfo.php');
         $declared_classes = get_declared_classes();
+
+
+
+        /*
         foreach ($declared_classes as $class_name) {
-            if (strpos($class_name, "restore_classic_widgets_Diagnose") !== false) {
+            if (strpos($class_name, "_Diagnose") !== false) {
                 return;
             }
         }
+        */
+
+        // --- CORREÇÃO PRINCIPAL: VERIFICAÇÃO PRECISA DE SUFIXO DE CLASSE (COMPATÍVEL COM PHP < 8.0) ---
+
+
+        // 2. Percorre a lista de classes.
+        foreach ($declared_classes as $class_name) {
+
+            // 3. Verifica se o nome da classe TERMINA com "_Diagnose".
+            $suffix = 'Bill_Diagnose';
+            $does_end_with = (substr($class_name, -strlen($suffix)) === $suffix);
+
+            if ($does_end_with) {
+                return; // Uma classe de diagnóstico principal já foi carregada, não faça nada.
+            }
+        }
+
+
         $plugin_slug = 'restore-classic-widgets';
         $plugin_text_domain = $plugin_slug;
         $notification_url = "https://wpmemory.com/fix-low-memory-limit/";
@@ -122,23 +145,20 @@ add_action('init', 'restore_classic_widgets_restore_classic_widgets_hooking_diag
 function restore_classic_widgets_restore_classic_widgets_hooking_catch_errors()
 {
     global $restore_classic_widgets_plugin_slug;
-    global $restore_classic_widgets_is_admin;
-    $declared_classes = get_declared_classes();
-    foreach ($declared_classes as $class_name) {
-        if (strpos($class_name, "restore_classic_widgets_catch_errors") !== false) {
-            return;
+    if (current_user_can("manage_options")) {
+        $declared_classes = get_declared_classes();
+        foreach ($declared_classes as $class_name) {
+            if (strpos($class_name, "_catch_errors") !== false) {
+                return;
+            }
         }
-    }
-    $restore_classic_widgets_plugin_slug = 'restore-classic-widgets';
-    require_once dirname(__FILE__) . "/includes/catch-errors/class_restore_classic_widgets_catch_errors.php";
-}
-function restore_classic_widgets_load_feedback()
-{
-    global $restore_classic_widgets_is_admin;
-    if ($restore_classic_widgets_is_admin and current_user_can("manage_options")) {
-        require_once dirname(__FILE__) . "/includes/feedback-last/feedback-last.php";
+        $restore_classic_widgets_plugin_slug = 'restore-classic-widgets';
+        require_once dirname(__FILE__) . "/includes/catch-errors/class_bill_catch_errors.php";
     }
 }
+add_action('init', 'restore_classic_widgets_restore_classic_widgets_hooking_catch_errors');
+
+/*
 function restore_classic_widgets_restore_classic_widgets_install()
 {
     global $restore_classic_widgets_is_admin;
@@ -159,4 +179,6 @@ function restore_classic_widgets_restore_classic_widgets_install()
         require_once dirname(__FILE__) . "/includes/install-checkup/class_restore_classic_widgets_install.php";
     }
 }
+*/
+//
 //
